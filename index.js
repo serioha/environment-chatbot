@@ -12,8 +12,8 @@ app.get("/", function (req, res) {
   res.send("Deployed!");
 });
 
-// Creates the endpoint for our webhook 
-app.post('/webhook', (req, res) => {  
+// Creates the endpoint for our webhook
+app.post('/webhook', (req, res) => {
   let body = req.body;
 
   // Checks this is an event from a page subscription
@@ -41,29 +41,32 @@ function processPostback(event) {
   var senderId = event.sender.id;
   var payload = event.postback.payload;
 
-  if (payload === "Greeting") {
-    // Get user's first name from the User Profile API
-    // and include it in the greeting
-    request({
-      url: "https://graph.facebook.com/v2.6/" + senderId,
-      qs: {
-        access_token: process.env.PAGE_ACCESS_TOKEN,
-        fields: "first_name"
-      },
-      method: "GET"
-    }, function(error, response, body) {
-      var greeting = "";
-      if (error) {
-        console.log("Error getting user's name: " +  error);
-      } else {
-        var bodyObj = JSON.parse(body);
-        name = bodyObj.first_name;
-        greeting = "Hi " + name + ". ";
-      }
-      var message = greeting + "My name is Volunteer Network Bot. I can tell you various details regarding volunteer. Which country do you live in?";
-      sendMessage(senderId, {text: message});
-    });
-  }
+  var message = greeting + "My name is Volunteer Network Bot. I can tell you various details regarding volunteer. Which country do you live in?";
+  sendMessage(senderId, {text: message});
+  //
+  // if (payload === "Greeting") {
+  //   // Get user's first name from the User Profile API
+  //   // and include it in the greeting
+  //   request({
+  //     url: "https://graph.facebook.com/v2.6/" + senderId,
+  //     qs: {
+  //       access_token: process.env.PAGE_ACCESS_TOKEN,
+  //       fields: "first_name"
+  //     },
+  //     method: "GET"
+  //   }, function(error, response, body) {
+  //     var greeting = "";
+  //     if (error) {
+  //       console.log("Error getting user's name: " +  error);
+  //     } else {
+  //       var bodyObj = JSON.parse(body);
+  //       name = bodyObj.first_name;
+  //       greeting = "Hi " + name + ". ";
+  //     }
+  //     var message = greeting + "My name is Volunteer Network Bot. I can tell you various details regarding volunteer. Which country do you live in?";
+  //     sendMessage(senderId, {text: message});
+  //   });
+  // }
 }
 
 // sends message to user
@@ -89,25 +92,25 @@ app.get('/webhook', (req, res) => {
   // Your verify token. Should be a random string.
   // let VERIFY_TOKEN = "<YOUR_VERIFY_TOKEN>"
   let VERIFY_TOKEN = process.env.VERIFICATION_TOKEN
-    
+
   // Parse the query params
   let mode = req.query['hub.mode'];
   let token = req.query['hub.verify_token'];
   let challenge = req.query['hub.challenge'];
-    
+
   // Checks if a token and mode is in the query string of the request
   if (mode && token) {
-  
+
     // Checks the mode and token sent is correct
     if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-      
+
       // Responds with the challenge token from the request
       console.log('WEBHOOK_VERIFIED');
       res.status(200).send(challenge);
-    
+
     } else {
       // Responds with '403 Forbidden' if verify tokens do not match
-      res.sendStatus(403);      
+      res.sendStatus(403);
     }
   }
 });
