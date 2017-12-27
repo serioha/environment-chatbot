@@ -21,6 +21,10 @@ app.post('/webhook', (req, res) => {
 
     // Iterates over each entry - there may be multiple if batched
     body.entry.forEach(function(entry) {
+      let webhook_event = entry.messaging[0];
+      let sender_psid = webhook_event.sender.id;
+      console.log('Sender PSID: ' + sender_psid);
+
       entry.messaging.forEach(function(event) {
         if (event.postback) {
           processPostback(event);
@@ -40,6 +44,7 @@ app.post('/webhook', (req, res) => {
 function processPostback(event) {
   var senderId = event.sender.id;
   var payload = event.postback.payload;
+
 
   var message = greeting + "My name is Volunteer Network Bot. I can tell you various details regarding volunteer. Which country do you live in?";
   sendMessage(senderId, {text: message});
