@@ -152,8 +152,19 @@ function handlePostback(sender_psid, received_postback) {
     };
     callSendAPI(sender_psid, yesPayload);
   } else if (payload === START_SEARCH_NO) {
-    callSendAPI(sender_psid, {text: "That's ok my friend, do you want to find other ways to help WWF?"});
     const noPayload = {
+      "text": "That's ok my friend, do you want to find other ways to help WWF?",
+      "quick_replies":[
+        {
+          "content_type":"text",
+          "title":"Yes.",
+          "payload": OTHER_HELP_YES
+        }
+      ]
+    };
+    callSendAPI(sender_psid, noPayload);
+  } else if (payload === OTHER_HELP_YES) {
+    const campaigns = {
       "attachment":{
          "type":"template",
          "payload":{
@@ -187,7 +198,7 @@ function handlePostback(sender_psid, received_postback) {
          }
        }
     };
-    callSendAPI(sender_psid, noPayload);
+    callSendAPI(sender_psid, campaigns);
   } else if (payload === GREETING) {
     request({
       url: "https://graph.facebook.com/v2.6/" + sender_psid,
