@@ -170,15 +170,15 @@ function handlePostback(sender_psid, received_postback) {
                    "title":"View Website"
                  },{
                    "type":"web_url",
-                   "url":"https://donate.wwf.org.au/campaigns/donate/#AD",
+                   "url":"http://donate.wwf.org.au/campaigns/donate/#AD",
                    "title":"Adopt an Animal"
                  },{
                    "type":"web_url",
-                   "url":"https://donate.wwf.org.au/campaigns/rhinoappeal/",
+                   "url":"http://donate.wwf.org.au/campaigns/rhinoappeal/",
                    "title":"Javan Rhino Appeal"
                  },{
                    "type":"web_url",
-                   "url":"https://donate.wwf.org.au/campaigns/wildcards/",
+                   "url":"http://donate.wwf.org.au/campaigns/wildcards/",
                    "title":"Send a Wildcard"
                  }
                ]
