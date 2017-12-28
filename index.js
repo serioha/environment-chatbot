@@ -121,16 +121,72 @@ function handlePostback(sender_psid, received_postback) {
   const START_SEARCH_NO = 'START_SEARCH_NO';
   const START_SEARCH_YES = 'START_SEARCH_YES';
   const GREETING = 'GREETING';
+  const AUSTRALIA_YES = 'AUSTRALIA_YES';
+  const AUSTRALIA_NO = 'AUSTRALIA_NO';
 
   // Get the payload for the postback
   let payload = received_postback.payload;
 
   // Set the response based on the postback payload
   if (payload === START_SEARCH_YES) {
-    const yesPayload = { "text": "Thanks!" };
+    const yesPayload = {
+      "text": " Ok, I have to get to know you a little bit more for this. Do you live in Australia?",
+      "quick_replies":[
+        {
+          "content_type":"text",
+          "title":"Yes!",
+          "payload": AUSTRALIA_YES
+        },
+        {
+          "content_type":"text",
+          "title":"Nope.",
+          "payload": AUSTRALIA_NO
+        }
+      ]
+    };
     callSendAPI(sender_psid, yesPayload);
   } else if (payload === START_SEARCH_NO) {
-    const noPayload = { "text": "Oops, try sending another image." };
+    const noPayload = {
+      "attachment":{
+      "type":"template",
+      "payload":{
+        "template_type":"generic",
+        "elements":[
+           {
+            "title":"That'\''s ok my friend, do you want to find other ways to help WWF?",
+            "image_url":"http://www.wwf.org.au/Images/UserUploadedImages/416/img-planet-globe-on-moss-forest-1000px.jpg",
+            "subtitle":"We'\''ve some other areas needing help.",
+            "default_action": {
+              "type": "web_url",
+              "url": "https://donate.wwf.org.au/campaigns/adopt-a-koala/",
+              "messenger_extensions": true,
+              "webview_height_ratio": "tall",
+              "fallback_url": "http://www.wwf.org.au"
+            },
+            "buttons":[
+              {
+                "type":"web_url",
+                "url":"https://donate.wwf.org.au/campaigns/adopt-a-koala/",
+                "title":"Adopt a Koaka"
+              },{
+                "type":"web_url",
+                "url":"https://donate.wwf.org.au/campaigns/wwf-donate-monthly/",
+                "title":"Donate Monthly"
+              },{
+                "type":"web_url",
+                "url":"https://donate.wwf.org.au/campaigns/rhinoappeal/?utm_expid=.m0RW-0r7QV-b74CdIQKXig.0&utm_referrer=https%3A%2F%2Fdonate.wwf.org.au%2Fcampaigns%2Fwwf-donate-monthly%2F",
+                "title":"Java Rhino Appeal"
+              },{
+                "type":"web_url",
+                "url":"https://donate.wwf.org.au/campaigns/wildcards/",
+                "title":"Send a wildcard"
+              }
+            ]
+          }
+        ]
+      }
+    }
+    };
     callSendAPI(sender_psid, noPayload);
   } else if (payload === GREETING) {
     request({
