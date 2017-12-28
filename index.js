@@ -146,7 +146,7 @@ function handlePostback(sender_psid, received_postback) {
         const name = bodyObj.first_name;
         const greeting = "Hi " + name + ". ";
       }
-      const message = greeting + "Would you like to join a community of like-minded pandas in your area?What movie would you like to know about?";
+      const message = greeting + "Would you like to join a community of like-minded pandas in your area?";
       const greetingPayload = { "text": message };
       callSendAPI(sender_psid, greetingPayload);
     });
