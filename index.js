@@ -23,7 +23,7 @@ app.post('/webhook', (req, res) => {
       // Gets the body of the webhook event
       let webhook_event = entry.messaging[0];
       console.log(webhook_event);
-      
+
       // Get the sender PSID
       let sender_psid = webhook_event.sender.id;
       console.log('Sender ID: ' + sender_psid);
@@ -143,10 +143,10 @@ function handlePostback(sender_psid, received_postback) {
         console.log("Error getting user's name: " +  error);
       } else {
         var bodyObj = JSON.parse(body);
-        name = bodyObj.first_name;
-        greeting = "Hi " + name + ". ";
+        const name = bodyObj.first_name;
+        const greeting = "Hi " + name + ". ";
       }
-      var message = greeting + "Would you like to join a community of like-minded pandas in your area?What movie would you like to know about?";
+      const message = greeting + "Would you like to join a community of like-minded pandas in your area?What movie would you like to know about?";
       const greetingPayload = { "text": message };
       callSendAPI(sender_psid, greetingPayload);
     });
