@@ -32,10 +32,12 @@ app.post('/webhook', (req, res) => {
       // pass the event to the appropriate handler function
       if (webhook_event.postback) {
         handlePostback(sender_psid, webhook_event.postback);
-      } else if (webhook_event.message.quick_reply){
-        handlePostback(sender_psid, webhook_event.message.quick_reply);
       } else if (webhook_event.message) {
-        handleMessage(sender_psid, webhook_event.message);
+        if (webhook_event.message.quick_reply){
+          handlePostback(sender_psid, webhook_event.message.quick_reply);
+        } else{
+          handleMessage(sender_psid, webhook_event.message);
+        }
       }
     });
     // Return a '200 OK' response to all events
