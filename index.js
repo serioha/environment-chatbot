@@ -159,25 +159,18 @@ function handlePostback(sender_psid, received_postback) {
            "template_type":"generic",
            "elements":[
               {
-               "title":"Welcome to Peter'\''s Hats",
-               "image_url":"https://petersfancybrownhats.com/company_image.png",
-               "subtitle":"We'\''ve got the right hat for everyone.",
-               "default_action": {
-                 "type": "web_url",
-                 "url": "https://peterssendreceiveapp.ngrok.io/view?item=103",
-                 "messenger_extensions": true,
-                 "webview_height_ratio": "tall",
-                 "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
-               },
+               "title":"Would you like to help?",
+               "image_url":"http://awsassets.panda.org/img/original/wwf_infographic_tropical_deforestation.jpg",
+               "subtitle":"With something else?",
                "buttons":[
                  {
                    "type":"web_url",
-                   "url":"https://petersfancybrownhats.com",
+                   "url":"http://www.wwf.org.au",
                    "title":"View Website"
                  },{
-                   "type":"postback",
-                   "title":"Start Chatting",
-                   "payload":"DEVELOPER_DEFINED_PAYLOAD"
+                   "type":"web_url",
+                   "url":"http://www.wwf.org.au",
+                   "title":"Donate"
                  }
                ]
              }
