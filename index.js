@@ -147,7 +147,21 @@ function handlePostback(sender_psid, received_postback) {
         const greeting = "Hi " + name + ". ";
       }
       const message = greeting + "Would you like to join a community of like-minded pandas in your area?";
-      const greetingPayload = { "text": message };
+      const greetingPayload = {
+        "text": message,
+        "buttons": [
+          {
+            "type": "postback",
+            "title": "Yes!",
+            "payload": "yes",
+          },
+          {
+            "type": "postback",
+            "title": "No!",
+            "payload": "no",
+          }
+        ]
+      };
       callSendAPI(sender_psid, greetingPayload);
     });
   }
