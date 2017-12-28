@@ -153,45 +153,7 @@ function handlePostback(sender_psid, received_postback) {
     callSendAPI(sender_psid, yesPayload);
   } else if (payload === START_SEARCH_NO) {
     const noPayload = {
-      "attachment":{
-      "type":"template",
-      "payload":{
-        "template_type":"generic",
-        "elements":[
-           {
-            "title":"That'\''s ok my friend, do you want to find other ways to help WWF?",
-            "image_url":"http://www.wwf.org.au/Images/UserUploadedImages/416/img-planet-globe-on-moss-forest-1000px.jpg",
-            "subtitle":"We'\''ve some other areas needing help.",
-            "default_action": {
-              "type": "web_url",
-              "url": "https://donate.wwf.org.au/campaigns/adopt-a-koala/",
-              "messenger_extensions": true,
-              "webview_height_ratio": "tall",
-              "fallback_url": "http://www.wwf.org.au"
-            },
-            "buttons":[
-              {
-                "type":"web_url",
-                "url":"https://donate.wwf.org.au/campaigns/adopt-a-koala/",
-                "title":"Adopt a Koaka"
-              },{
-                "type":"web_url",
-                "url":"https://donate.wwf.org.au/campaigns/wwf-donate-monthly/",
-                "title":"Donate Monthly"
-              },{
-                "type":"web_url",
-                "url":"https://donate.wwf.org.au/campaigns/rhinoappeal/?utm_expid=.m0RW-0r7QV-b74CdIQKXig.0&utm_referrer=https%3A%2F%2Fdonate.wwf.org.au%2Fcampaigns%2Fwwf-donate-monthly%2F",
-                "title":"Java Rhino Appeal"
-              },{
-                "type":"web_url",
-                "url":"https://donate.wwf.org.au/campaigns/wildcards/",
-                "title":"Send a wildcard"
-              }
-            ]
-          }
-        ]
-      }
-    }
+      "text": "it's ok"
     };
     callSendAPI(sender_psid, noPayload);
   } else if (payload === GREETING) {
