@@ -147,7 +147,7 @@ function handlePostback(sender_psid, received_postback) {
       } else {
         var bodyObj = JSON.parse(body);
         const name = bodyObj.first_name;
-        const greeting = "Hi " + name + ". ";
+        greeting = "Hi " + name + ". ";
       }
       const message = greeting + "Would you like to join a community of like-minded pandas in your area?";
       const greetingPayload = {
