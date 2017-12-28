@@ -149,16 +149,16 @@ function handlePostback(sender_psid, received_postback) {
       const message = greeting + "Would you like to join a community of like-minded pandas in your area?";
       const greetingPayload = {
         "text": message,
-        "buttons": [
+        "quick_replies":[
           {
-            "type": "postback",
-            "title": "Yes!",
-            "payload": "yes",
+            "content_type":"text",
+            "title":"Yes!",
+            "payload":"yes"
           },
           {
-            "type": "postback",
-            "title": "No!",
-            "payload": "no",
+            "content_type":"text",
+            "title":"No, thanks.",
+            "payload":"no"
           }
         ]
       };
