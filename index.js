@@ -115,15 +115,16 @@ function handleMessage(sender_psid, received_message) {
 
 function handlePostback(sender_psid, received_postback) {
 
-  let response;
   // Get the payload for the postback
   let payload = received_postback.payload;
 
   // Set the response based on the postback payload
   if (payload === 'yes') {
-    response = { "text": "Thanks!" }
+    const yesPayload = { "text": "Thanks!" };
+    callSendAPI(sender_psid, yesPayload);
   } else if (payload === 'no') {
-    response = { "text": "Oops, try sending another image." }
+    const noPayload = { "text": "Oops, try sending another image." };
+    callSendAPI(sender_psid, noPayload);
   } else if (payload === 'Greeting') {
     request({
       url: "https://graph.facebook.com/v2.6/" + sender_psid,
@@ -142,11 +143,10 @@ function handlePostback(sender_psid, received_postback) {
         greeting = "Hi " + name + ". ";
       }
       var message = greeting + "Would you like to join a community of like-minded pandas in your area?What movie would you like to know about?";
-      sendMessage(sender_psid, {text: message});
+      const greetingPayload = { "text": message };
+      callSendAPI(sender_psid, greetingPayload);
     });
   }
-  // Send the message to acknowledge the postback
-  callSendAPI(sender_psid, response);
 }
 
 function callSendAPI(sender_psid, response) {
