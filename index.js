@@ -152,6 +152,7 @@ function handlePostback(sender_psid, received_postback) {
     };
     callSendAPI(sender_psid, yesPayload);
   } else if (payload === START_SEARCH_NO) {
+    callSendAPI(sender_psid, {text: "That's ok my friend, do you want to find other ways to help WWF?"});
     const noPayload = {
       "attachment":{
          "type":"template",
@@ -159,9 +160,9 @@ function handlePostback(sender_psid, received_postback) {
            "template_type":"generic",
            "elements":[
               {
-               "title":"Would you like to help?",
+               "title":"We need your help",
                "image_url":"http://awsassets.panda.org/img/original/wwf_infographic_tropical_deforestation.jpg",
-               "subtitle":"With something else?",
+               "subtitle":"to save our natural world",
                "buttons":[
                  {
                    "type":"web_url",
@@ -169,8 +170,16 @@ function handlePostback(sender_psid, received_postback) {
                    "title":"View Website"
                  },{
                    "type":"web_url",
-                   "url":"http://www.wwf.org.au",
-                   "title":"Donate"
+                   "url":"https://donate.wwf.org.au/campaigns/donate/#AD",
+                   "title":"Adopt an Animal"
+                 },{
+                   "type":"web_url",
+                   "url":"https://donate.wwf.org.au/campaigns/rhinoappeal/",
+                   "title":"Javan Rhino Appeal"
+                 },{
+                   "type":"web_url",
+                   "url":"https://donate.wwf.org.au/campaigns/wildcards/",
+                   "title":"Send a Wildcard"
                  }
                ]
              }
