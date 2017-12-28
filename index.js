@@ -118,18 +118,21 @@ function handleMessage(sender_psid, received_message) {
 }
 
 function handlePostback(sender_psid, received_postback) {
+  const START_SEARCH_NO = 'START_SEARCH_NO';
+  const START_SEARCH_YES = 'START_SEARCH_YES';
+  const GREETING = 'GREETING';
 
   // Get the payload for the postback
   let payload = received_postback.payload;
 
   // Set the response based on the postback payload
-  if (payload === 'yes') {
+  if (payload === START_SEARCH_YES) {
     const yesPayload = { "text": "Thanks!" };
     callSendAPI(sender_psid, yesPayload);
-  } else if (payload === 'no') {
+  } else if (payload === START_SEARCH_NO) {
     const noPayload = { "text": "Oops, try sending another image." };
     callSendAPI(sender_psid, noPayload);
-  } else if (payload === 'Greeting') {
+  } else if (payload === GREETING) {
     request({
       url: "https://graph.facebook.com/v2.6/" + sender_psid,
       qs: {
@@ -153,12 +156,12 @@ function handlePostback(sender_psid, received_postback) {
           {
             "content_type":"text",
             "title":"Yes!",
-            "payload":"yes"
+            "payload": START_SEARCH_YES
           },
           {
             "content_type":"text",
             "title":"No, thanks.",
-            "payload":"no"
+            "payload": START_SEARCH_NO
           }
         ]
       };
