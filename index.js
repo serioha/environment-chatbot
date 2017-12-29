@@ -27,6 +27,7 @@ app.post('/webhook', (req, res) => {
 
   // Parse the request body from the POST
   let body = req.body;
+  console.log('body:', JSON.stringify(body));
 
   // Check the webhook event is from a Page subscription
   if (body.object === 'page') {
@@ -34,7 +35,7 @@ app.post('/webhook', (req, res) => {
     body.entry.forEach(function(entry) {
       // Gets the body of the webhook event
       let webhook_event = entry.messaging[0];
-      console.log('Webhook event:', JSON.stringify(webhook_event));
+      console.log('webhook_event:', JSON.stringify(webhook_event));
 
       // Get the sender PSID
       let sender_psid = webhook_event.sender.id;
