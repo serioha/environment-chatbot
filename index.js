@@ -1,6 +1,12 @@
 'use strict';
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-// Imports dependencies and set up http server
+const START_SEARCH_NO = 'START_SEARCH_NO';
+const START_SEARCH_YES = 'START_SEARCH_YES';
+const GREETING = 'GREETING';
+const AUSTRALIA_YES = 'AUSTRALIA_YES';
+const AUSTRALIA_NO = 'AUSTRALIA_NO';
+const OTHER_HELP_YES = 'OTHER_HELP_YES';
+
 const
   request = require('request'),
   express = require('express'),
@@ -80,56 +86,26 @@ app.get('/webhook', (req, res) => {
 });
 
 function handleMessage(sender_psid, received_message) {
-  let response;
-
-  // Checks if the message contains text
-  if (received_message.text) {
-    // Create the payload for a basic text message, which
-    // will be added to the body of our request to the Send API
-    response = {
-      "text": `You sent the message: "${received_message.text}". Now send me an attachment !`
-    }
-  } else if (received_message.attachments) {
-    // Get the URL of the message attachment
-    let attachment_url = received_message.attachments[0].payload.url;
-    response = {
-      "attachment": {
-        "type": "template",
-        "payload": {
-          "template_type": "generic",
-          "elements": [{
-            "title": "Is this the right picture?",
-            "subtitle": "Tap a button to answer.",
-            "image_url": attachment_url,
-            "buttons": [
-              {
-                "type": "postback",
-                "title": "Yes!",
-                "payload": "yes",
-              },
-              {
-                "type": "postback",
-                "title": "No!",
-                "payload": "no",
-              }
-            ],
-          }]
-        }
+  const response = {
+    "text": "Hi, it would take me some times to answer your message. Are you looking for opportunities to join a community of like-minded pandas in your area?",
+    "quick_replies":[
+      {
+        "content_type":"text",
+        "title":"Yes!",
+        "payload": START_SEARCH_YES
+      },{
+        "content_type":"text",
+        "title":"No, thanks.",
+        "payload": START_SEARCH_NO
       }
-    }
-  }
+    ]
+  };
 
   // Send the response message
   callSendAPI(sender_psid, response);
 }
 
 function handlePostback(sender_psid, received_postback) {
-  const START_SEARCH_NO = 'START_SEARCH_NO';
-  const START_SEARCH_YES = 'START_SEARCH_YES';
-  const GREETING = 'GREETING';
-  const AUSTRALIA_YES = 'AUSTRALIA_YES';
-  const AUSTRALIA_NO = 'AUSTRALIA_NO';
-  const OTHER_HELP_YES = 'OTHER_HELP_YES';
 
   // Get the payload for the postback
   let payload = received_postback.payload;
@@ -182,15 +158,15 @@ function handlePostback(sender_psid, received_postback) {
                    "title":"View Website"
                  },{
                    "type":"web_url",
-                   "url":"http://donate.wwf.org.au/campaigns/donate/#AD",
+                   "url":"http://www.wwf.org.au",
                    "title":"Adopt an Animal"
                  },{
                    "type":"web_url",
-                   "url":"http://donate.wwf.org.au/campaigns/rhinoappeal/",
+                   "url":"http://www.wwf.org.au",
                    "title":"Javan Rhino Appeal"
                  },{
                    "type":"web_url",
-                   "url":"http://donate.wwf.org.au/campaigns/wildcards/",
+                   "url":"http://www.wwf.org.au",
                    "title":"Send a Wildcard"
                  }
                ]
