@@ -106,8 +106,9 @@ function handleMessage(sender_psid, message) {
       status: AUSTRALIA_LOCATION_PROVIDED
     };
 
-    ChatStatus.update(query, update, function (err, affected) {
+    ChatStatus.update(query, update, (err, affected) => {
       console.log('handleMessage affected:', affected);
+      console.log('handleMessage after update sender_psid:', sender_psid);
       if (err){
         console.log('Error in updating coordinates:', err);
       } else if (affected){
