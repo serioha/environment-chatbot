@@ -45,7 +45,7 @@ app.post('/webhook', (req, res) => {
         if (webhook_event.message.quick_reply){
           handlePostback(sender_psid, webhook_event.message.quick_reply);
         } else{
-          handleMessage(sender_psid, webhook_event.message);
+          handleMessage(sender_psid);
         }
       }
     });
@@ -86,7 +86,7 @@ app.get('/webhook', (req, res) => {
   }
 });
 
-function handleMessage(sender_psid, received_message) {
+function handleMessage(sender_psid) {
   const response = {
     "text": "Hi, it would take me some times to answer your message. Are you looking for opportunities to join a community of like-minded pandas in your area?",
     "quick_replies":[
@@ -210,19 +210,41 @@ function handleGreetingPostback(sender_psid){
   });
 }
 
+function handleAustraliaYesPostback(sender_psid){
+  const askForLocationPayload = {
+    "text": "Where about do you live?",
+    "quick_replies":[
+      {
+        "content_type":"location"
+      }
+    ]
+  };
+  callSendAPI(sender_psid, askForLocationPayload);
+}
+
 function handlePostback(sender_psid, received_postback) {
   // Get the payload for the postback
-  let payload = received_postback.payload;
-
+  const payload = received_postback.payload;
   // Set the response based on the postback payload
-  if (payload === START_SEARCH_YES) {
-    handleStartSearchYesPostback(sender_psid);
-  } else if (payload === START_SEARCH_NO) {
-    handleStartSearchNoPostback(sender_psid);
-  } else if (payload === OTHER_HELP_YES) {
-    handleOtherHelpPostback(sender_psid);
-  } else if (payload === GREETING) {
-    handleGreetingPostback(sender_psid);
+  switch (payload){
+    case START_SEARCH_YES:
+      handleStartSearchYesPostback(sender_psid);
+      break;
+    case START_SEARCH_NO:
+      handleStartSearchNoPostback(sender_psid);
+      break;
+    case OTHER_HELP_YES:
+      handleOtherHelpPostback(sender_psid);
+      break;
+    case AUSTRALIA_YES:
+      handleAustraliaYesPostback(sender_psid);
+      break;
+    case GREETING:
+      handleGreetingPostback(sender_psid);
+      break;
+    default:
+      console.log('Cannot differentiate the payload type, treat it as a emtpy message');
+      handleMessage(sender_psid);
   }
 }
 
@@ -243,9 +265,7 @@ function callSendAPI(sender_psid, response) {
     "method": "POST",
     "json": request_body
   }, (err, res, body) => {
-    if (!err) {
-      console.log('message sent!')
-    } else {
+    if (err) {
       console.error("Unable to send message:" + err);
     }
   });
