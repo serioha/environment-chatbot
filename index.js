@@ -110,13 +110,13 @@ function handleMessage(sender_psid, message) {
       },
       status: AUSTRALIA_LOCATION_PROVIDED
     };
+    const options = {upsert: true, new: true};
 
-    ChatStatus.update(query, update, (err, affected) => {
-      console.log('handleMessage affected:', affected);
-      console.log('handleMessage after update sender_psid:', sender_psid);
+    ChatStatus.findOneAndUpdate(query, update, options, (err, cs) => {
+      console.log('handleMessage update coordinates:', cs);
       if (err){
         console.log('Error in updating coordinates:', err);
-      } else if (affected){
+      } else if (cs){
         response = {
           "attachment": {
             "type": "template",
