@@ -5,6 +5,10 @@ const START_SEARCH_YES = 'START_SEARCH_YES';
 const GREETING = 'GREETING';
 const AUSTRALIA_YES = 'AUSTRALIA_YES';
 const AUSTRALIA_LOCATION_PROVIDED = 'AUSTRALIA_LOCATION_PROVIDED';
+const PREF_CLEANUP = 'PREF_CLEANUP';
+const PREF_REVEGETATION = 'PREF_REVEGETATION';
+const PREF_BIO_SURVEY = 'PREF_BIO_SURVEY';
+const PREF_CANVASSING = 'PREF_CANVASSING';
 const AUSTRALIA_NO = 'AUSTRALIA_NO';
 const OTHER_HELP_YES = 'OTHER_HELP_YES';
 const FACEBOOK_GRAPH_API_BASE_URL = 'https://graph.facebook.com/v2.6/';
@@ -114,64 +118,27 @@ function handleMessage(sender_psid, message) {
       } else if (affected){
         response = {
           "attachment": {
-            "type": "template",
-            "payload": {
-              "template_type": "list",
-              "top_element_style": "compact",
-              "elements": [
+            "type":"template",
+            "payload":{
+              "template_type":"button",
+              "text":"What are you mostly interested in doing??",
+              "buttons":[
                 {
-                  "title": "Environmental cleanups",
-                  "subtitle": "Help cleaning sites which require attention",
-                  "image_url": "https://peterssendreceiveapp.ngrok.io/img/collection.png",
-                  "buttons": [
-                    {
-                      "title": "View",
-                      "type": "web_url",
-                      "url": "https://peterssendreceiveapp.ngrok.io/collection",
-                      "messenger_extensions": true,
-                      "webview_height_ratio": "tall",
-                      "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
-                    }
-                  ]
-                },
-                {
-                  "title": "Revegetation",
-                  "subtitle": "These areas need some hands for planting",
-                  "default_action": {
-                    "type": "web_url",
-                    "url": "https://peterssendreceiveapp.ngrok.io/view?item=100",
-                    "messenger_extensions": false,
-                    "webview_height_ratio": "tall"
-                  }
-                },
-                {
-                  "title": "Bio surveys",
-                  "image_url": "https://peterssendreceiveapp.ngrok.io/img/blue-t-shirt.png",
-                  "subtitle": "Help in Bio surveys",
-                  "default_action": {
-                    "type": "web_url",
-                    "url": "https://peterssendreceiveapp.ngrok.io/view?item=101",
-                    "messenger_extensions": true,
-                    "webview_height_ratio": "tall",
-                    "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
-                  },
-                  "buttons": [
-                    {
-                      "title": "Canvassing",
-                      "type": "web_url",
-                      "url": "https://peterssendreceiveapp.ngrok.io/shop?item=101",
-                      "messenger_extensions": true,
-                      "webview_height_ratio": "tall",
-                      "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
-                    }
-                  ]
-                }
-              ],
-               "buttons": [
-                {
-                  "title": "View More",
                   "type": "postback",
-                  "payload": "payload"
+                  "title": "Environmental Cleanups",
+                  "payload": PREF_CLEANUP
+                },{
+                  "type": "postback",
+                  "title": "Revegetation",
+                  "payload": PREF_REVEGETATION
+                },{
+                  "type": "postback",
+                  "title": "Bio surveys",
+                  "payload": PREF_BIO_SURVEY
+                },{
+                  "type": "postback",
+                  "title": "Canvassing",
+                  "payload": PREF_CANVASSING
                 }
               ]
             }
