@@ -4,6 +4,7 @@ const START_SEARCH_NO = 'START_SEARCH_NO';
 const START_SEARCH_YES = 'START_SEARCH_YES';
 const GREETING = 'GREETING';
 const AUSTRALIA_YES = 'AUSTRALIA_YES';
+const AUSTRALIA_LOCATION_YES = 'AUSTRALIA_LOCATION_YES';
 const AUSTRALIA_NO = 'AUSTRALIA_NO';
 const OTHER_HELP_YES = 'OTHER_HELP_YES';
 const FACEBOOK_GRAPH_API_BASE_URL = 'https://graph.facebook.com/v2.6/';
@@ -85,35 +86,62 @@ app.get('/webhook', (req, res) => {
 });
 
 function handleMessage(sender_psid, message) {
-
+  let response;
   ChatStatus.findOne({ 'user_id': sender_psid }, function (err, cs) {
     if (err){
       console.log('Error in getteing chat status:', err);
     }
     console.log('Find sender id from ChatStatus: ', cs);
-    if (cs && cs.status === AUSTRALIA_YES && message.attachements && message.attachments.payload && message.attachments.payload.coordinates){
-      console.log('message.attachments.payload.coordinates', message.attachments.payload.coordinates);
+    if (cs && cs.status === AUSTRALIA_YES && message.attachments && message.attachments.payload && message.attachments.payload.coordinates){
+      console.log('message.attachments.payload.coordinates', );
+      const location = message.attachments.payload.coordinates;
+      if (!isNaN(location.lat) && !isNaN(location.long){
+        const query = {user_id: sender_psid};
+        const update = {
+          location: {
+            lat: location.lat,
+            long: location.long
+          },
+          status: AUSTRALIA_LOCATION_YES
+        };
+
+        ChatStatus.findOneAndUpdate(query, update).exec((err, cs) => {
+          console.log('update status to db: ', cs);
+          response = {
+            "text": "Ok I got your location, what are you interested in?",
+            "quick_replies":[
+              {
+                "content_type":"text",
+                "title":"Do this!",
+                "payload": "TESTDOTHIS"
+              },{
+                "content_type":"text",
+                "title":"Do that!",
+                "payload": "TESTDOTHAT"
+              }
+            ]
+          };
+        });
+      }
+    } else {
+      response = {
+        "text": "Hi, it would take me some times to answer your message. Are you looking for opportunities to join a community of like-minded pandas in your area?",
+        "quick_replies":[
+          {
+            "content_type":"text",
+            "title":"Yes!",
+            "payload": START_SEARCH_YES
+          },{
+            "content_type":"text",
+            "title":"No, thanks.",
+            "payload": START_SEARCH_NO
+          }
+        ]
+      };
     }
   });
-  
-  // let response;
-  // response = {
-  //   "text": "Hi, it would take me some times to answer your message. Are you looking for opportunities to join a community of like-minded pandas in your area?",
-  //   "quick_replies":[
-  //     {
-  //       "content_type":"text",
-  //       "title":"Yes!",
-  //       "payload": START_SEARCH_YES
-  //     },{
-  //       "content_type":"text",
-  //       "title":"No, thanks.",
-  //       "payload": START_SEARCH_NO
-  //     }
-  //   ]
-  // };
-  //
-  // // Send the response message
-  // callSendAPI(sender_psid, response);
+
+  callSendAPI(sender_psid, response);
 }
 
 function handleStartSearchYesPostback(sender_psid){

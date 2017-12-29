@@ -4,8 +4,8 @@ var Schema = mongoose.Schema;
 var ChatStatusSchema = new Schema({
   user_id: String,
   location: {
-    lat: Number,
-    long: Number
+    latitude: Number,
+    longitude: Number
   },
   preference: String,
   status: String
