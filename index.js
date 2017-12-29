@@ -174,6 +174,7 @@ function handleMessage(sender_psid, message) {
                 }
               ]
             }
+          }
         };
         callSendAPI(sender_psid, response);
       }
