@@ -107,7 +107,7 @@ function handleMessage(sender_psid, message) {
   if (coordinates && !isNaN(coordinates.lat) && !isNaN(coordinates.long)){
     const query = {'user_id': sender_psid, 'status': AUSTRALIA_YES };
     const update = {
-      $set: { location: {lat: oordinates.lat, long: coordinates.long}, status: AUSTRALIA_LOCATION_PROVIDED }
+      $set: { location: {lat: coordinates.lat, long: coordinates.long}, status: AUSTRALIA_LOCATION_PROVIDED }
     };
     const options = {upsert: true, new: true};
 
@@ -381,10 +381,9 @@ function callSendAPI(sender_psid, response) {
     "method": "POST",
     "json": request_body
   }, (err, res, body) => {
-    console.log("Message Sent Response res:", res);
     console.log("Message Sent Response body:", body);
     if (err) {
-      console.error("Unable to send message:" + err);
+      console.error("Unable to send message:", err);
     }
   });
 }
