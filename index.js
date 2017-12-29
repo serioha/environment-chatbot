@@ -305,10 +305,8 @@ function handlePreferencePostback(sender_psid, chatStatus){
       if (err) {
         console.error("Unable to search Facebook API:" + err);
       } else {
-          console.log("Facebook API result:", body);
-          const organizations = body.data;
-          console.log('organizations: ', organizations);
-          let elements = organizations.map(org => {
+          console.log("Facebook API result:", body.data);
+          let elements = body.data.map(org => {
               let element = {
                 "title": org.name,
                 "buttons":[{
@@ -387,9 +385,11 @@ function handlePostback(sender_psid, received_postback) {
     case GREETING:
       updateStatus(sender_psid, payload, handleGreetingPostback);
       break;
+    case PREF_CLEANUP:
+    case PREF_REVEGETATION:
+    case PREF_BIO_SURVEY:
     case PREF_CANVASSING:
       updatePreference(sender_psid, payload, handlePreferencePostback);
-
       break;
     default:
       console.log('Cannot differentiate the payload type');
