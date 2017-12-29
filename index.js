@@ -12,7 +12,11 @@ const
   request = require('request'),
   express = require('express'),
   body_parser = require('body-parser'),
+  mongoose = require('mongoose'),
   app = express().use(body_parser.json()); // creates express http server
+
+var db = mongoose.connect(process.env.MONGODB_URI);
+var ChatStatus = require("./models/chatstatus");
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
@@ -29,7 +33,7 @@ app.post('/webhook', (req, res) => {
     body.entry.forEach(function(entry) {
       // Gets the body of the webhook event
       let webhook_event = entry.messaging[0];
-      console.log('Webhook event:', webhook_event);
+      console.log('Webhook event:', JSON.stringify(webhook_event));
 
       // Get the sender PSID
       let sender_psid = webhook_event.sender.id;
@@ -40,12 +44,10 @@ app.post('/webhook', (req, res) => {
       if (webhook_event.postback) {
         handlePostback(sender_psid, webhook_event.postback);
       } else if (webhook_event.message) {
-        console.log('webhook_event.message', JSON.stringify(webhook_event.message));
-        console.log('webhook_event.message["quick_reply"]', webhook_event.message["quick_reply"]);
         if (webhook_event.message.quick_reply){
           handlePostback(sender_psid, webhook_event.message.quick_reply);
         } else{
-          handleMessage(sender_psid);
+          handleMessage(sender_psid, webhook_event.message);
         }
       }
     });
@@ -86,7 +88,7 @@ app.get('/webhook', (req, res) => {
   }
 });
 
-function handleMessage(sender_psid) {
+function handleMessage(sender_psid, message) {
   const response = {
     "text": "Hi, it would take me some times to answer your message. Are you looking for opportunities to join a community of like-minded pandas in your area?",
     "quick_replies":[
@@ -223,25 +225,42 @@ function handleAustraliaYesPostback(sender_psid){
   callSendAPI(sender_psid, askForLocationPayload);
 }
 
+function updateStatus(sender_psid, payload){
+  const query = {user_id: sender_psid};
+  const update = {status: payload};
+  const options = {upsert: true};
+  ChatStatus.findOneAndUpdate(query, update, options, function(err, cs) {
+    if (err) {
+      console.log("Database error: " + err);
+    }
+  });
+}
+
 function handlePostback(sender_psid, received_postback) {
   // Get the payload for the postback
   const payload = received_postback.payload;
-  // Set the response based on the postback payload
+
+  // Set the response and udpate db based on the postback payload
   switch (payload){
     case START_SEARCH_YES:
       handleStartSearchYesPostback(sender_psid);
+      updateStatus(sender_psid, payload);
       break;
     case START_SEARCH_NO:
       handleStartSearchNoPostback(sender_psid);
+      updateStatus(sender_psid, payload);
       break;
     case OTHER_HELP_YES:
       handleOtherHelpPostback(sender_psid);
+      updateStatus(sender_psid, payload);
       break;
     case AUSTRALIA_YES:
       handleAustraliaYesPostback(sender_psid);
+      updateStatus(sender_psid, payload);
       break;
     case GREETING:
       handleGreetingPostback(sender_psid);
+      updateStatus(sender_psid, payload);
       break;
     default:
       console.log('Cannot differentiate the payload type, treat it as a emtpy message');
@@ -269,5 +288,26 @@ function callSendAPI(sender_psid, response) {
     if (err) {
       console.error("Unable to send message:" + err);
     }
+  });
+}
+
+function callSendLocation(sender_psid, response) {
+  // Construct the message body
+  let request_body = {
+    "recipient": {
+      "id": sender_psid
+    },
+    "message": response
+  }
+
+  // Send the HTTP request to the Messenger Platform
+  request({
+    "uri": `${FACEBOOK_GRAPH_API_BASE_URL}me/messages`,
+    "qs": { "access_token": PAGE_ACCESS_TOKEN },
+    "method": "POST",
+    "json": request_body
+  }, (err, res, body) => {
+    console.log('callSendLocation res', res);
+    console.log('callSendLocation body', body);
   });
 }
