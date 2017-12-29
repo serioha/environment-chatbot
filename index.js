@@ -327,10 +327,10 @@ function updateStatus(sender_psid, status, callback){
 function updatePreference(sender_psid, perference, callback){
   const query = {user_id: sender_psid};
   const update = {status: 'PREFERENCE_PROVIDED', preference: perference};
-  const options = {upsert: true};
+  const options = {upsert: true, new: true};
 
   ChatStatus.findOneAndUpdate(query, update, options).exec((err, cs) => {
-    console.log('update status to db: ', cs);
+    console.log('update perference to db: ', cs);
     callback(sender_psid, cs);
   });
 }
