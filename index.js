@@ -319,6 +319,10 @@ function handlePreferencePostback(sender_psid, chatStatus){
               if (org.category){
                 element["subtitle"] = org.category;
               }
+
+              if (org.picture && org.picture.data && org.picture.data.url){
+                element["image_url"] = org.picture.data.url;
+              }
               return element;
           });
           const organizationPayload = {
