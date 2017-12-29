@@ -305,8 +305,9 @@ function handlePreferencePostback(sender_psid, chatStatus){
       if (err) {
         console.error("Unable to search Facebook API:" + err);
       } else {
-          console.log("Facebook API result:" + err);
+          console.log("Facebook API result:", body);
           const organizations = body.data || [];
+          console.log('organizations: ', organizations);
           let elements = organizations.map(org => {
               let element = {
                 "title": org.name,
@@ -323,8 +324,10 @@ function handlePreferencePostback(sender_psid, chatStatus){
               if (org.picture && org.picture.data && org.picture.data.url){
                 element["image_url"] = org.picture.data.url;
               }
+              console.log("Facebook API element:", element);
               return element;
           });
+          console.log("Facebook API elements:", elements);
           const organizationPayload = {
             "attachment": {
               "type": "template",
