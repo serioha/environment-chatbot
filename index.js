@@ -6,6 +6,7 @@ const GREETING = 'GREETING';
 const AUSTRALIA_YES = 'AUSTRALIA_YES';
 const AUSTRALIA_NO = 'AUSTRALIA_NO';
 const OTHER_HELP_YES = 'OTHER_HELP_YES';
+const FACEBOOK_GRAPH_API_BASE_URL = 'https://graph.facebook.com/v2.6/';
 
 const
   request = require('request'),
@@ -105,104 +106,123 @@ function handleMessage(sender_psid, received_message) {
   callSendAPI(sender_psid, response);
 }
 
-function handlePostback(sender_psid, received_postback) {
+function handleStartSearchYesPostback(sender_psid){
+  const yesPayload = {
+    "text": " Ok, I have to get to know you a little bit more for this. Do you live in Australia?",
+    "quick_replies":[
+      {
+        "content_type":"text",
+        "title":"Yes!",
+        "payload": AUSTRALIA_YES
+      },
+      {
+        "content_type":"text",
+        "title":"Nope.",
+        "payload": AUSTRALIA_NO
+      }
+    ]
+  };
+  callSendAPI(sender_psid, yesPayload);
+}
 
+function handleStartSearchNoPostback(sender_psid){
+  const noPayload = {
+    "text": "That's ok my friend, do you want to find other ways to help WWF?",
+    "quick_replies":[
+      {
+        "content_type":"text",
+        "title":"Yes.",
+        "payload": OTHER_HELP_YES
+      }
+    ]
+  };
+  callSendAPI(sender_psid, noPayload);
+}
+
+function handleOtherHelpPostback(sender_psid){
+  const campaigns = {
+    "attachment":{
+       "type":"template",
+       "payload":{
+         "template_type":"generic",
+         "elements":[
+            {
+             "title":"We need your help",
+             "image_url":"http://awsassets.panda.org/img/original/wwf_infographic_tropical_deforestation.jpg",
+             "subtitle":"to save our natural world",
+             "buttons":[
+               {
+                 "type":"web_url",
+                 "url":"https://donate.wwf.org.au/campaigns/rhinoappeal/",
+                 "title":"Javan Rhino Appeal"
+               },{
+                 "type":"web_url",
+                 "url":"https://donate.wwf.org.au/campaigns/donate/#AD",
+                 "title":"Adopt an Animal"
+               },{
+                 "type":"web_url",
+                 "url":"https://donate.wwf.org.au/campaigns/wildcards/",
+                 "title":"Send a wildcard"
+               }
+             ]
+           }
+         ]
+       }
+     }
+  };
+  callSendAPI(sender_psid, campaigns);
+}
+
+function handleGreetingPostback(sender_psid){
+  request({
+    url: `${FACEBOOK_GRAPH_API_BASE_URL}${sender_psid}`,
+    qs: {
+      access_token: process.env.PAGE_ACCESS_TOKEN,
+      fields: "first_name"
+    },
+    method: "GET"
+  }, function(error, response, body) {
+    var greeting = "";
+    if (error) {
+      console.log("Error getting user's name: " +  error);
+    } else {
+      var bodyObj = JSON.parse(body);
+      const name = bodyObj.first_name;
+      greeting = "Hi " + name + ". ";
+    }
+    const message = greeting + "Would you like to join a community of like-minded pandas in your area?";
+    const greetingPayload = {
+      "text": message,
+      "quick_replies":[
+        {
+          "content_type":"text",
+          "title":"Yes!",
+          "payload": START_SEARCH_YES
+        },
+        {
+          "content_type":"text",
+          "title":"No, thanks.",
+          "payload": START_SEARCH_NO
+        }
+      ]
+    };
+    callSendAPI(sender_psid, greetingPayload);
+  });
+}
+
+function handlePostback(sender_psid, received_postback) {
   // Get the payload for the postback
   let payload = received_postback.payload;
 
   // Set the response based on the postback payload
   if (payload === START_SEARCH_YES) {
-    const yesPayload = {
-      "text": " Ok, I have to get to know you a little bit more for this. Do you live in Australia?",
-      "quick_replies":[
-        {
-          "content_type":"text",
-          "title":"Yes!",
-          "payload": AUSTRALIA_YES
-        },
-        {
-          "content_type":"text",
-          "title":"Nope.",
-          "payload": AUSTRALIA_NO
-        }
-      ]
-    };
-    callSendAPI(sender_psid, yesPayload);
+    handleStartSearchYesPostback(sender_psid);
   } else if (payload === START_SEARCH_NO) {
-    const noPayload = {
-      "text": "That's ok my friend, do you want to find other ways to help WWF?",
-      "quick_replies":[
-        {
-          "content_type":"text",
-          "title":"Yes.",
-          "payload": OTHER_HELP_YES
-        }
-      ]
-    };
-    callSendAPI(sender_psid, noPayload);
+    handleStartSearchNoPostback(sender_psid);
   } else if (payload === OTHER_HELP_YES) {
-    const campaigns = {
-      "attachment":{
-         "type":"template",
-         "payload":{
-           "template_type":"generic",
-           "elements":[
-              {
-               "title":"We need your help",
-               "image_url":"http://awsassets.panda.org/img/original/wwf_infographic_tropical_deforestation.jpg",
-               "subtitle":"to save our natural world",
-               "buttons":[
-                 {
-                   "type":"web_url",
-                   "url":"http://www.wwf.org.au",
-                   "title":"View Website"
-                 },{
-                   "type":"web_url",
-                   "url":"http://www.wwf.org.au",
-                   "title":"Adopt an Animal"
-                 }
-               ]
-             }
-           ]
-         }
-       }
-    };
-    callSendAPI(sender_psid, campaigns);
+    handleOtherHelpPostback(sender_psid);
   } else if (payload === GREETING) {
-    request({
-      url: "https://graph.facebook.com/v2.6/" + sender_psid,
-      qs: {
-        access_token: process.env.PAGE_ACCESS_TOKEN,
-        fields: "first_name"
-      },
-      method: "GET"
-    }, function(error, response, body) {
-      var greeting = "";
-      if (error) {
-        console.log("Error getting user's name: " +  error);
-      } else {
-        var bodyObj = JSON.parse(body);
-        const name = bodyObj.first_name;
-        greeting = "Hi " + name + ". ";
-      }
-      const message = greeting + "Would you like to join a community of like-minded pandas in your area?";
-      const greetingPayload = {
-        "text": message,
-        "quick_replies":[
-          {
-            "content_type":"text",
-            "title":"Yes!",
-            "payload": START_SEARCH_YES
-          },
-          {
-            "content_type":"text",
-            "title":"No, thanks.",
-            "payload": START_SEARCH_NO
-          }
-        ]
-      };
-      callSendAPI(sender_psid, greetingPayload);
-    });
+    handleGreetingPostback(sender_psid);
   }
 }
 
@@ -218,7 +238,7 @@ function callSendAPI(sender_psid, response) {
 
   // Send the HTTP request to the Messenger Platform
   request({
-    "uri": "https://graph.facebook.com/v2.6/me/messages",
+    "uri": `${FACEBOOK_GRAPH_API_BASE_URL}me/messages`,
     "qs": { "access_token": PAGE_ACCESS_TOKEN },
     "method": "POST",
     "json": request_body
