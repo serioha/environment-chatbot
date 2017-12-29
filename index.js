@@ -296,18 +296,42 @@ function handleAustraliaYesPostback(sender_psid){
 
 function handlePreferencePostback(sender_psid, chatStatus){
   console.log('handlePreferencePostback params: ', chatStatus);
-  if (chatStatus){
+  if (chatStatus && !isNaN(chatStatus.location.lat) && !isNaN(chatStatus.location.long)){
     request({
-      "url": `${FACEBOOK_GRAPH_API_BASE_URL}search?type=page&q=NonProfit+Australia&fields=name,id,category,location&center=-33.8876,151.19837&distance=1000`,
+      "url": `${FACEBOOK_GRAPH_API_BASE_URL}search?type=page&q=NonProfit+Australia&fields=name,id,category,location,picture&center=${chatStatus.location.lat},${chatStatus.location.long}&distance=5000`,
       "qs": { "access_token": PAGE_ACCESS_TOKEN },
       "method": "GET"
     }, (err, res, body) => {
-      console.log("PREF_CANVASSING Response res:", res);
-      console.log("PREF_CANVASSING Response body:", body);
       if (err) {
-        console.error("Unable to PREF_CANVASSING:" + err);
+        console.error("Unable to search Facebook API:" + err);
+      } else {
+          const organizations = body.data || [];
+          const elements = organizations.map(org => {
+              let element = {
+                "title": org.name,
+                "buttons":[{
+                  "type": "web_url",
+                  "url": `https://www.facebook.com/${org.id}`,
+                  "title": org.name,
+                }]
+              };
+              if (org.category){
+                element["subtitle"] = org.category;
+              }
+              return element;
+          });
+          const organizationPayload = {
+            "attachment": {
+              "type": "template",
+              "payload": {
+                "template_type": "list",
+                "top_element_style": "compact",
+                "elements": elements
+              }
+            }
+          };
+          callSendAPI(sender_psid, organizationPayload);
       }
-      // callSendAPI(sender_psid, greetingPayload);
     });
   }
 }
