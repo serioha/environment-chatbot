@@ -124,58 +124,49 @@ function handleMessage(sender_psid, message) {
               "top_element_style": "compact",
               "elements": [
                 {
-                  "title": "Classic T-Shirt Collection",
-                  "subtitle": "See all our colors",
-                  "image_url": "https://peterssendreceiveapp.ngrok.io/img/collection.png",
+                  "title": "Environmental Cleanup",
+                  "subtitle": "Clean environment",
+                  "image_url": "http://www.wwf.org.au/ecThemes/3/Images/wwf-logo.svg",
                   "buttons": [
                     {
-                      "title": "View",
-                      "type": "web_url",
-                      "url": "https://peterssendreceiveapp.ngrok.io/collection",
-                      "messenger_extensions": true,
-                      "webview_height_ratio": "tall",
-                      "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                      type: "postback",
+                      title: "Go",
+                      payload: PREF_CLEANUP
                     }
                   ]
-                },
-                {
-                  "title": "Classic White T-Shirt",
-                  "subtitle": "See all our colors",
-                  "default_action": {
-                    "type": "web_url",
-                    "url": "https://peterssendreceiveapp.ngrok.io/view?item=100",
-                    "messenger_extensions": false,
-                    "webview_height_ratio": "tall"
-                  }
-                },
-                {
-                  "title": "Classic Blue T-Shirt",
-                  "image_url": "https://peterssendreceiveapp.ngrok.io/img/blue-t-shirt.png",
-                  "subtitle": "100% Cotton, 200% Comfortable",
-                  "default_action": {
-                    "type": "web_url",
-                    "url": "https://peterssendreceiveapp.ngrok.io/view?item=101",
-                    "messenger_extensions": true,
-                    "webview_height_ratio": "tall",
-                    "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
-                  },
+                }, {
+                  "title": "Revegetation",
+                  "subtitle": "Revegetation",
+                  "image_url": "http://www.wwf.org.au/ecThemes/3/Images/wwf-logo.svg",
                   "buttons": [
                     {
-                      "title": "Shop Now",
-                      "type": "web_url",
-                      "url": "https://peterssendreceiveapp.ngrok.io/shop?item=101",
-                      "messenger_extensions": true,
-                      "webview_height_ratio": "tall",
-                      "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                      type: "postback",
+                      title: "Go",
+                      payload: PREF_REVEGETATION
                     }
                   ]
-                }
-              ],
-               "buttons": [
-                {
-                  "title": "View More",
-                  "type": "postback",
-                  "payload": "payload"
+                }, {
+                  "title": "Bio Survey",
+                  "subtitle": "Bio Survey",
+                  "image_url": "http://www.wwf.org.au/ecThemes/3/Images/wwf-logo.svg",
+                  "buttons": [
+                    {
+                      type: "postback",
+                      title: "Go",
+                      payload: PREF_BIO_SURVEY
+                    }
+                  ]
+                }, {
+                  "title": "Canvassing",
+                  "subtitle": "Canvassing",
+                  "image_url": "http://www.wwf.org.au/ecThemes/3/Images/wwf-logo.svg",
+                  "buttons": [
+                    {
+                      type: "postback",
+                      title: "Go",
+                      payload: PREF_CANVASSING
+                    }
+                  ]
                 }
               ]
             }
