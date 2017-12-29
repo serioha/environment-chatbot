@@ -92,6 +92,7 @@ function handleMessage(sender_psid, message) {
       console.log('Error in getteing chat status:', err);
     }
     console.log('Find sender id from ChatStatus: ', cs);
+    console.log('message for handleMessage: ', message);
     if (cs && cs.status === AUSTRALIA_YES && message.attachments && message.attachments.payload && message.attachments.payload.coordinates){
       console.log('message.attachments.payload.coordinates', message.attachments.payload.coordinates);
       const location = message.attachments.payload.coordinates;
