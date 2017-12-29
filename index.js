@@ -7,6 +7,7 @@ const AUSTRALIA_YES = 'AUSTRALIA_YES';
 const AUSTRALIA_NO = 'AUSTRALIA_NO';
 const OTHER_HELP_YES = 'OTHER_HELP_YES';
 const FACEBOOK_GRAPH_API_BASE_URL = 'https://graph.facebook.com/v2.6/';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 const
   request = require('request'),
@@ -15,8 +16,8 @@ const
   mongoose = require('mongoose'),
   app = express().use(body_parser.json()); // creates express http server
 
-var db = mongoose.connect(process.env.MONGODB_URI);
-var ChatStatus = require("./models/chatstatus");
+ var db = mongoose.connect(MONGODB_URI);
+ var ChatStatus = require("./models/chatstatus");
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
@@ -89,7 +90,17 @@ app.get('/webhook', (req, res) => {
 });
 
 function handleMessage(sender_psid, message) {
-  const response = {
+  let response;
+  ChatStatus.findOne({ 'user_id': sender_psid }, 'status', function (err, cs) {
+    if (err){
+      console.log('Error in getteing chat status');
+    }
+    if (cs.status === AUSTRALIA_YES && message.attachement && message.attachment.payload && message.attachment.payload.coorditation){
+      console.log('message.attachment.payload.coorditation', message.attachment.payload.coorditation);
+    }
+  });
+
+  response = {
     "text": "Hi, it would take me some times to answer your message. Are you looking for opportunities to join a community of like-minded pandas in your area?",
     "quick_replies":[
       {
@@ -229,6 +240,7 @@ function updateStatus(sender_psid, payload){
   const query = {user_id: sender_psid};
   const update = {status: payload};
   const options = {upsert: true};
+
   ChatStatus.findOneAndUpdate(query, update, options, function(err, cs) {
     if (err) {
       console.log("Database error: " + err);
@@ -280,7 +292,7 @@ function callSendAPI(sender_psid, response) {
 
   // Send the HTTP request to the Messenger Platform
   request({
-    "uri": `${FACEBOOK_GRAPH_API_BASE_URL}me/messages`,
+    "url": `${FACEBOOK_GRAPH_API_BASE_URL}me/messages`,
     "qs": { "access_token": PAGE_ACCESS_TOKEN },
     "method": "POST",
     "json": request_body
@@ -288,26 +300,5 @@ function callSendAPI(sender_psid, response) {
     if (err) {
       console.error("Unable to send message:" + err);
     }
-  });
-}
-
-function callSendLocation(sender_psid, response) {
-  // Construct the message body
-  let request_body = {
-    "recipient": {
-      "id": sender_psid
-    },
-    "message": response
-  }
-
-  // Send the HTTP request to the Messenger Platform
-  request({
-    "uri": `${FACEBOOK_GRAPH_API_BASE_URL}me/messages`,
-    "qs": { "access_token": PAGE_ACCESS_TOKEN },
-    "method": "POST",
-    "json": request_body
-  }, (err, res, body) => {
-    console.log('callSendLocation res', res);
-    console.log('callSendLocation body', body);
   });
 }
