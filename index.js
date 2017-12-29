@@ -85,33 +85,35 @@ app.get('/webhook', (req, res) => {
 });
 
 function handleMessage(sender_psid, message) {
-  let response;
-  ChatStatus.findOne({ 'user_id': sender_psid }, 'status', function (err, cs) {
+
+  ChatStatus.findOne({ 'user_id': sender_psid }, function (err, cs) {
     if (err){
       console.log('Error in getteing chat status:', err);
     }
-    if (cs && cs.status === AUSTRALIA_YES && message.attachement && message.attachment.payload && message.attachment.payload.coorditation){
-      console.log('message.attachment.payload.coorditation', message.attachment.payload.coorditation);
+    console.log('Find sender id from ChatStatus: ', cs);
+    if (cs && cs.status === AUSTRALIA_YES && message.attachements && message.attachments.payload && message.attachments.payload.coordinates){
+      console.log('message.attachments.payload.coordinates', message.attachments.payload.coordinates);
     }
   });
-
-  response = {
-    "text": "Hi, it would take me some times to answer your message. Are you looking for opportunities to join a community of like-minded pandas in your area?",
-    "quick_replies":[
-      {
-        "content_type":"text",
-        "title":"Yes!",
-        "payload": START_SEARCH_YES
-      },{
-        "content_type":"text",
-        "title":"No, thanks.",
-        "payload": START_SEARCH_NO
-      }
-    ]
-  };
-
-  // Send the response message
-  callSendAPI(sender_psid, response);
+  
+  // let response;
+  // response = {
+  //   "text": "Hi, it would take me some times to answer your message. Are you looking for opportunities to join a community of like-minded pandas in your area?",
+  //   "quick_replies":[
+  //     {
+  //       "content_type":"text",
+  //       "title":"Yes!",
+  //       "payload": START_SEARCH_YES
+  //     },{
+  //       "content_type":"text",
+  //       "title":"No, thanks.",
+  //       "payload": START_SEARCH_NO
+  //     }
+  //   ]
+  // };
+  //
+  // // Send the response message
+  // callSendAPI(sender_psid, response);
 }
 
 function handleStartSearchYesPostback(sender_psid){
@@ -223,8 +225,7 @@ function handleAustraliaYesPostback(sender_psid){
     "text": "Where about do you live?",
     "quick_replies":[
       {
-        "content_type":"location",
-        "payload": "TEST_LOCATION"
+        "content_type":"location"
       }
     ]
   };
@@ -238,7 +239,7 @@ function updateStatus(sender_psid, payload, callback){
 
   ChatStatus.findOneAndUpdate(query, update, options).exec((err, cs) => {
     console.log('update status to db: ', cs);
-    callback(cs.user_id);
+    callback(sender_psid);
   });
 }
 
