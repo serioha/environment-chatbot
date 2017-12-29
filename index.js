@@ -325,7 +325,7 @@ function handlePreferencePostback(sender_psid, chatStatus){
               }
               console.log("Facebook API element:", element);
               return element;
-          }) || [];
+          });
           console.log("Facebook API elements:", elements);
           const organizationPayload = {
             "attachment": {
