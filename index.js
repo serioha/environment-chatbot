@@ -88,7 +88,7 @@ app.get('/webhook', (req, res) => {
 function handleMessage(sender_psid, message) {
   // check if it is a location message
   let response;
-  const locationAttachment = message.attachments.find(a => a.type === 'location');
+  const locationAttachment = message.attachments && message.attachments.find(a => a.type === 'location');
   if (locationAttachment){
     // check if the sender status is AUSTRALIA_YES
     ChatStatus.findOne({ 'user_id': sender_psid }, function (err, cs) {
