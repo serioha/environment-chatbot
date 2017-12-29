@@ -358,6 +358,8 @@ function callSendAPI(sender_psid, response) {
     "method": "POST",
     "json": request_body
   }, (err, res, body) => {
+    console.log("Message Sent Response res:", res);
+    console.log("Message Sent Response body:", body);
     if (err) {
       console.error("Unable to send message:" + err);
     }
