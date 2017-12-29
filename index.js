@@ -90,10 +90,10 @@ function handleMessage(sender_psid, message) {
   let response;
   console.log('handleMEssage message:', JSON.stringify(message));
 
-  const locationAttachment = message.attachments && message.attachments.find(a => a.type === 'location');
+  const locationAttachment = message && message.attachments && message.attachments.find(a => a.type === 'location');
   console.log('handleMEssage locationAttachment:', JSON.stringify(locationAttachment));
 
-  const coordinates = locationAttachment.payload && locationAttachment.payload.coordinates;
+  const coordinates = locationAttachment && locationAttachment.payload && locationAttachment.payload.coordinates;
   console.log('handleMEssage coordinates:', JSON.stringify(coordinates));
 
   if (coordinates && !isNaN(coordinates.lat) && !isNaN(coordinates.long)){
@@ -112,18 +112,68 @@ function handleMessage(sender_psid, message) {
         console.log('Error in updating coordinates:', err);
       } else if (affected){
         response = {
-          "text": "Ok I got your location, what are you interested in?",
-          "quick_replies":[
-            {
-              "content_type":"text",
-              "title":"Do this!",
-              "payload": "TESTDOTHIS"
-            },{
-              "content_type":"text",
-              "title":"Do that!",
-              "payload": "TESTDOTHAT"
+          "attachment": {
+            "type": "template",
+            "payload": {
+              "template_type": "list",
+              "top_element_style": "compact",
+              "elements": [
+                {
+                  "title": "Environmental cleanups",
+                  "subtitle": "Help cleaning sites which require attention",
+                  "image_url": "https://peterssendreceiveapp.ngrok.io/img/collection.png",
+                  "buttons": [
+                    {
+                      "title": "View",
+                      "type": "web_url",
+                      "url": "https://peterssendreceiveapp.ngrok.io/collection",
+                      "messenger_extensions": true,
+                      "webview_height_ratio": "tall",
+                      "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                    }
+                  ]
+                },
+                {
+                  "title": "Revegetation",
+                  "subtitle": "These areas need some hands for planting",
+                  "default_action": {
+                    "type": "web_url",
+                    "url": "https://peterssendreceiveapp.ngrok.io/view?item=100",
+                    "messenger_extensions": false,
+                    "webview_height_ratio": "tall"
+                  }
+                },
+                {
+                  "title": "Bio surveys",
+                  "image_url": "https://peterssendreceiveapp.ngrok.io/img/blue-t-shirt.png",
+                  "subtitle": "Help in Bio surveys",
+                  "default_action": {
+                    "type": "web_url",
+                    "url": "https://peterssendreceiveapp.ngrok.io/view?item=101",
+                    "messenger_extensions": true,
+                    "webview_height_ratio": "tall",
+                    "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                  },
+                  "buttons": [
+                    {
+                      "title": "Canvassing",
+                      "type": "web_url",
+                      "url": "https://peterssendreceiveapp.ngrok.io/shop?item=101",
+                      "messenger_extensions": true,
+                      "webview_height_ratio": "tall",
+                      "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                    }
+                  ]
+                }
+              ],
+               "buttons": [
+                {
+                  "title": "View More",
+                  "type": "postback",
+                  "payload": "payload"
+                }
+              ]
             }
-          ]
         };
         callSendAPI(sender_psid, response);
       }
