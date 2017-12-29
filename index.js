@@ -92,14 +92,14 @@ app.get('/webhook', (req, res) => {
 
 function handleMessage(sender_psid, message) {
   let response;
-  ChatStatus.findOne({ 'user_id': sender_psid }, 'status', function (err, cs) {
-    if (err){
-      console.log('Error in getteing chat status');
-    }
-    if (cs.status === AUSTRALIA_YES && message.attachement && message.attachment.payload && message.attachment.payload.coorditation){
-      console.log('message.attachment.payload.coorditation', message.attachment.payload.coorditation);
-    }
-  });
+  // ChatStatus.findOne({ 'user_id': sender_psid }, 'status', function (err, cs) {
+  //   if (err){
+  //     console.log('Error in getteing chat status');
+  //   }
+  //   if (cs.status === AUSTRALIA_YES && message.attachement && message.attachment.payload && message.attachment.payload.coorditation){
+  //     console.log('message.attachment.payload.coorditation', message.attachment.payload.coorditation);
+  //   }
+  // });
 
   response = {
     "text": "Hi, it would take me some times to answer your message. Are you looking for opportunities to join a community of like-minded pandas in your area?",
