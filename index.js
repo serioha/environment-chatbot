@@ -30,10 +30,10 @@ app.post('/webhook', (req, res) => {
 
   const body = req.body;
 
-  if (data.object === 'page') {
+  if (body.object === 'page') {
       // Iterate over each entry
       // There may be multiple if batched
-      data.entry.forEach((pageEntry) => {
+      body.entry.forEach((pageEntry) => {
         // Iterate over each messaging event and handle accordingly
         pageEntry.messaging.forEach((messagingEvent) => {
           console.log({messagingEvent});
