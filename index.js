@@ -107,7 +107,7 @@ function handleMessage(sender_psid, message) {
   if (coordinates && !isNaN(coordinates.lat) && !isNaN(coordinates.long)){
     const query = {'user_id': sender_psid, 'status': AUSTRALIA_YES };
     const update = {
-      $set: { "location.lat": 10, "location.long": 10, status: AUSTRALIA_LOCATION_PROVIDED }
+      $set: { "location.lat": "10", "location.long": "10", status: AUSTRALIA_LOCATION_PROVIDED }
     };
     const options = {upsert: true, new: true};
 
