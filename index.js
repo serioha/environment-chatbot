@@ -160,14 +160,6 @@ function handlePostback(sender_psid, received_postback) {
                    "type":"web_url",
                    "url":"http://www.wwf.org.au",
                    "title":"Adopt an Animal"
-                 },{
-                   "type":"web_url",
-                   "url":"http://www.wwf.org.au",
-                   "title":"Javan Rhino Appeal"
-                 },{
-                   "type":"web_url",
-                   "url":"http://www.wwf.org.au",
-                   "title":"Send a Wildcard"
                  }
                ]
              }
