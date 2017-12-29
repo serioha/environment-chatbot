@@ -5,7 +5,7 @@ var ChatStatusSchema = new Schema({
   user_id: String,
   location: {
     lat: String,
-    long: String
+    long: Number
   },
   preference: String,
   status: String
