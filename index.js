@@ -5,6 +5,7 @@ const START_SEARCH_YES = 'START_SEARCH_YES';
 const GREETING = 'GREETING';
 const AUSTRALIA_YES = 'AUSTRALIA_YES';
 const AUSTRALIA_LOCATION_PROVIDED = 'AUSTRALIA_LOCATION_PROVIDED';
+const PREFERENCE_PROVIDED = 'PREFERENCE_PROVIDED';
 const PREF_CLEANUP = 'PREF_CLEANUP';
 const PREF_REVEGETATION = 'PREF_REVEGETATION';
 const PREF_BIO_SURVEY = 'PREF_BIO_SURVEY';
@@ -294,14 +295,43 @@ function handleAustraliaYesPostback(sender_psid){
   callSendAPI(sender_psid, askForLocationPayload);
 }
 
-function updateStatus(sender_psid, payload, callback){
+function handlePreferencePostback(sender_psid, chatStatus){
+  console.log('handlePreferencePostback params: ', chatStatus);
+  if (chatStatus){
+    request({
+      "url": `${FACEBOOK_GRAPH_API_BASE_URL}search?type=page&q=NonProfit+Australia&fields=name,id,category,location&center=-33.8876,151.19837&distance=1000`,
+      "qs": { "access_token": PAGE_ACCESS_TOKEN },
+      "method": "GET"
+    }, (err, res, body) => {
+      console.log("PREF_CANVASSING Response res:", res);
+      console.log("PREF_CANVASSING Response body:", body);
+      if (err) {
+        console.error("Unable to PREF_CANVASSING:" + err);
+      }
+      // callSendAPI(sender_psid, greetingPayload);
+    });
+  }
+}
+
+function updateStatus(sender_psid, status, callback){
   const query = {user_id: sender_psid};
-  const update = {status: payload};
+  const update = {status: status};
   const options = {upsert: true};
 
   ChatStatus.findOneAndUpdate(query, update, options).exec((err, cs) => {
     console.log('update status to db: ', cs);
     callback(sender_psid);
+  });
+}
+
+function updatePreference(sender_psid, perference, callback){
+  const query = {user_id: sender_psid};
+  const update = {status: 'PREFERENCE_PROVIDED', preference: perference};
+  const options = {upsert: true};
+
+  ChatStatus.findOneAndUpdate(query, update, options).exec((err, cs) => {
+    console.log('update status to db: ', cs);
+    callback(sender_psid, cs);
   });
 }
 
@@ -327,21 +357,11 @@ function handlePostback(sender_psid, received_postback) {
       updateStatus(sender_psid, payload, handleGreetingPostback);
       break;
     case PREF_CANVASSING:
-      request({
-        "url": `${FACEBOOK_GRAPH_API_BASE_URL}search?type=page&q=NonProfit+Australia&fields=name,id,category,location&center=-33.8876,151.19837&distance=1000`,
-        "qs": { "access_token": PAGE_ACCESS_TOKEN },
-        "method": "GET"
-      }, (err, res, body) => {
-        console.log("PREF_CANVASSING Response res:", res);
-        console.log("PREF_CANVASSING Response body:", body);
-        if (err) {
-          console.error("Unable to PREF_CANVASSING:" + err);
-        }
-      });
+      updatePreference(sender_psid, payload, handlePreferencePostback);
+
       break;
     default:
-      console.log('Cannot differentiate the payload type, treat it as a emtpy message');
-      handleMessage(sender_psid);
+      console.log('Cannot differentiate the payload type');
   }
 }
 
