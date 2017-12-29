@@ -89,66 +89,46 @@ function handleMessage(sender_psid, message) {
   // check if it is a location message
   let response;
   console.log('handleMEssage message:', JSON.stringify(message));
+
   const locationAttachment = message.attachments && message.attachments.find(a => a.type === 'location');
-  if (locationAttachment){
-    // check if the sender status is AUSTRALIA_YES
-    ChatStatus.findOne({ 'user_id': sender_psid }, function (err, cs) {
+  console.log('handleMEssage locationAttachment:', JSON.stringify(locationAttachment));
+
+  const coordinates = locationAttachment.payload && locationAttachment.payload.coordinates;
+  console.log('handleMEssage coordinates:', JSON.stringify(coordinates));
+
+  if (coordinates && !isNaN(coordinates.lat) && !isNaN(coordinates.long)){
+    const query = {'user_id': sender_psid, 'status': AUSTRALIA_YES };
+    const update = {
+      location: {
+        lat: coordinates.lat,
+        long: coordinates.long
+      },
+      status: AUSTRALIA_LOCATION_PROVIDED
+    };
+
+    ChatStatus.update(query, update, function (err, affected) {
+      console.log('handleMessage affected:', affected);
       if (err){
-        console.log('Error in getteing chat status:', err);
-      } else if (cs && cs.status === AUSTRALIA_YES){
-        const coordinates = locationAttachment.payload.coordinates;
-        if (!isNaN(coordinates.lat) && !isNaN(coordinates.long)){
-
-          // update status and coordinates to db
-          const query = {user_id: sender_psid};
-          const update = {
-            location: {
-              lat: coordinates.lat,
-              long: coordinates.long
-            },
-            status: AUSTRALIA_LOCATION_PROVIDED
-          };
-
-          ChatStatus.findOneAndUpdate(query, update).exec((err, cs) => {
-            console.log('update status to db: ', cs);
-            response = {
-              "text": "Ok I got your location, what are you interested in?",
-              "quick_replies":[
-                {
-                  "content_type":"text",
-                  "title":"Do this!",
-                  "payload": "TESTDOTHIS"
-                },{
-                  "content_type":"text",
-                  "title":"Do that!",
-                  "payload": "TESTDOTHAT"
-                }
-              ]
-            };
-          });
-        }
+        console.log('Error in updating coordinates:', err);
+      } else if (affected){
+        response = {
+          "text": "Ok I got your location, what are you interested in?",
+          "quick_replies":[
+            {
+              "content_type":"text",
+              "title":"Do this!",
+              "payload": "TESTDOTHIS"
+            },{
+              "content_type":"text",
+              "title":"Do that!",
+              "payload": "TESTDOTHAT"
+            }
+          ]
+        };
+        callSendAPI(sender_psid, response);
       }
     });
   }
-
-  if (!response){
-    response = {
-      "text": "Hi, it would take me some times to answer your message. Are you looking for opportunities to join a community of like-minded pandas in your area?",
-      "quick_replies":[
-        {
-          "content_type":"text",
-          "title":"Yes!",
-          "payload": START_SEARCH_YES
-        },{
-          "content_type":"text",
-          "title":"No, thanks.",
-          "payload": START_SEARCH_NO
-        }
-      ]
-    };
-  }
-
-  callSendAPI(sender_psid, response);
 }
 
 function handleStartSearchYesPostback(sender_psid){
