@@ -39,6 +39,9 @@ app.post('/webhook', (req, res) => {
   if (body.object === 'page') {
       // Iterate over each entry
       // There may be multiple if batched
+      if (!body.entry){
+        return;
+      }
       body.entry.forEach((pageEntry) => {
         // Iterate over each messaging event and handle accordingly
         pageEntry.messaging.forEach((messagingEvent) => {
@@ -104,11 +107,7 @@ function handleMessage(sender_psid, message) {
   if (coordinates && !isNaN(coordinates.lat) && !isNaN(coordinates.long)){
     const query = {'user_id': sender_psid, 'status': AUSTRALIA_YES };
     const update = {
-      location: {
-        lat: coordinates.lat,
-        long: coordinates.long
-      },
-      status: AUSTRALIA_LOCATION_PROVIDED
+      $set: { "location.lat": coordinates.lat, "location.long": coordinates.long, status: AUSTRALIA_LOCATION_PROVIDED }
     };
     const options = {upsert: true, new: true};
 
