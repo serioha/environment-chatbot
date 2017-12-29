@@ -245,6 +245,8 @@ function updateStatus(sender_psid, payload){
   ChatStatus.findOneAndUpdate(query, update, options, function(err, cs) {
     if (err) {
       console.log("Database error: " + err);
+    } else {
+      console.log("Database updated: " + cs);
     }
   });
 }
