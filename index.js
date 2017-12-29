@@ -129,6 +129,7 @@ function handlePostback(sender_psid, received_postback) {
   const GREETING = 'GREETING';
   const AUSTRALIA_YES = 'AUSTRALIA_YES';
   const AUSTRALIA_NO = 'AUSTRALIA_NO';
+  const OTHER_HELP_YES = 'OTHER_HELP_YES';
 
   // Get the payload for the postback
   let payload = received_postback.payload;
