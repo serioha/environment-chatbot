@@ -93,9 +93,9 @@ function handleMessage(sender_psid, message) {
     }
     console.log('Find sender id from ChatStatus: ', cs);
     if (cs && cs.status === AUSTRALIA_YES && message.attachments && message.attachments.payload && message.attachments.payload.coordinates){
-      console.log('message.attachments.payload.coordinates', );
+      console.log('message.attachments.payload.coordinates', message.attachments.payload.coordinates);
       const location = message.attachments.payload.coordinates;
-      if (!isNaN(location.lat) && !isNaN(location.long){
+      if (!isNaN(location.lat) && !isNaN(location.long)){
         const query = {user_id: sender_psid};
         const update = {
           location: {
