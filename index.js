@@ -305,8 +305,9 @@ function handlePreferencePostback(sender_psid, chatStatus){
       if (err) {
         console.error("Unable to search Facebook API:" + err);
       } else {
-          console.log("Facebook API result:", res);
-          let elements = res.body.data.map(org => {
+          console.log("Facebook API result:", body);
+          let bodyJson = JSON.parse(body);
+          let elements = bodyJson.data.map(org => {
               let element = {
                 "title": org.name,
                 "buttons":[{
@@ -324,7 +325,7 @@ function handlePreferencePostback(sender_psid, chatStatus){
               }
               console.log("Facebook API element:", element);
               return element;
-          });
+          }) || [];
           console.log("Facebook API elements:", elements);
           const organizationPayload = {
             "attachment": {
