@@ -305,8 +305,8 @@ function handlePreferencePostback(sender_psid, chatStatus){
       if (err) {
         console.error("Unable to search Facebook API:" + err);
       } else {
-          console.log("Facebook API result:", body.data);
-          let elements = body.data.map(org => {
+          console.log("Facebook API result:", body);
+          let elements = body["data"].map(org => {
               let element = {
                 "title": org.name,
                 "buttons":[{
