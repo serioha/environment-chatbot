@@ -126,44 +126,44 @@ function handleMessage(sender_psid, message) {
                 {
                   "title": "Environmental Cleanup",
                   "subtitle": "Clean environment",
-                  "image_url": "http://www.wwf.org.au/ecThemes/3/Images/wwf-logo.svg",
+                  "image_url": "http://www.wwf.org.au/Images/UserUploadedImages/416/img-bait-reef-coral-bleaching-rubble-1000px.jpg",
                   "buttons": [
                     {
                       type: "postback",
-                      title: "Go",
+                      title: "Go Environmental Cleanup",
                       payload: PREF_CLEANUP
                     }
                   ]
                 }, {
                   "title": "Revegetation",
                   "subtitle": "Revegetation",
-                  "image_url": "http://www.wwf.org.au/ecThemes/3/Images/wwf-logo.svg",
+                  "image_url": "http://www.wwf.org.au//Images/UserUploadedImages/416/img-planet-globe-on-moss-forest-1000px.jpg",
                   "buttons": [
                     {
                       type: "postback",
-                      title: "Go",
+                      title: "Go Revegetation",
                       payload: PREF_REVEGETATION
                     }
                   ]
                 }, {
                   "title": "Bio Survey",
                   "subtitle": "Bio Survey",
-                  "image_url": "http://www.wwf.org.au/ecThemes/3/Images/wwf-logo.svg",
+                  "image_url": "http://www.wwf.org.au/Images/UserUploadedImages/416/img-koala-in-tree-1000px.jpg",
                   "buttons": [
                     {
                       type: "postback",
-                      title: "Go",
+                      title: "Go Bio Survey",
                       payload: PREF_BIO_SURVEY
                     }
                   ]
                 }, {
                   "title": "Canvassing",
                   "subtitle": "Canvassing",
-                  "image_url": "http://www.wwf.org.au/ecThemes/3/Images/wwf-logo.svg",
+                  "image_url": "http://www.wwf.org.au/Images/UserUploadedImages/416/img-hackathon-winners-2017-1000px.jpg",
                   "buttons": [
                     {
                       type: "postback",
-                      title: "Go",
+                      title: "Go Canvassing",
                       payload: PREF_CANVASSING
                     }
                   ]
@@ -325,6 +325,20 @@ function handlePostback(sender_psid, received_postback) {
       break;
     case GREETING:
       updateStatus(sender_psid, payload, handleGreetingPostback);
+      break;
+    case PREF_CANVASSING:
+      request({
+        "url": `${FACEBOOK_GRAPH_API_BASE_URL}search?type=page&q=NonProfit+Australia&fields=name,id,category,location&center=-33.8876,151.19837&distance=1000`,
+        "qs": { "access_token": PAGE_ACCESS_TOKEN },
+        "method": "POST",
+        "json": request_body
+      }, (err, res, body) => {
+        console.log("PREF_CANVASSING Response res:", res);
+        console.log("PREF_CANVASSING Response body:", body);
+        if (err) {
+          console.error("Unable to PREF_CANVASSING:" + err);
+        }
+      });
       break;
     default:
       console.log('Cannot differentiate the payload type, treat it as a emtpy message');
