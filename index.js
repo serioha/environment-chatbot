@@ -215,7 +215,8 @@ function handleAustraliaYesPostback(sender_psid){
     "text": "Where about do you live?",
     "quick_replies":[
       {
-        "content_type":"location"
+        "content_type":"location",
+        "payload": "TEST_LOCATION"
       }
     ]
   };
