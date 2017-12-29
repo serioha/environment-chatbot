@@ -237,18 +237,12 @@ function handleAustraliaYesPostback(sender_psid){
   callSendAPI(sender_psid, askForLocationPayload);
 }
 
-function updateStatus(sender_psid, payload){
+function updateStatus(sender_psid, payload, callback){
   const query = {user_id: sender_psid};
   const update = {status: payload};
   const options = {upsert: true};
 
-  ChatStatus.findOneAndUpdate(query, update, options, function(err, cs) {
-    if (err) {
-      console.log("Database error: " + err);
-    } else {
-      console.log("Database updated: " + cs);
-    }
-  });
+  ChatStatus.findOneAndUpdate(query, update, options).exec((err, cs) => callback(cs.user_id));
 }
 
 function handlePostback(sender_psid, received_postback) {
@@ -258,24 +252,19 @@ function handlePostback(sender_psid, received_postback) {
   // Set the response and udpate db based on the postback payload
   switch (payload){
     case START_SEARCH_YES:
-      handleStartSearchYesPostback(sender_psid);
-      updateStatus(sender_psid, payload);
+      updateStatus(sender_psid, payload, handleStartSearchYesPostback);
       break;
     case START_SEARCH_NO:
-      handleStartSearchNoPostback(sender_psid);
-      updateStatus(sender_psid, payload);
+      updateStatus(sender_psid, payload, handleStartSearchNoPostback);
       break;
     case OTHER_HELP_YES:
-      handleOtherHelpPostback(sender_psid);
-      updateStatus(sender_psid, payload);
+      updateStatus(sender_psid, payload, handleOtherHelpPostback);
       break;
     case AUSTRALIA_YES:
-      handleAustraliaYesPostback(sender_psid);
-      updateStatus(sender_psid, payload);
+      updateStatus(sender_psid, payload, handleAustraliaYesPostback);
       break;
     case GREETING:
-      handleGreetingPostback(sender_psid);
-      updateStatus(sender_psid, payload);
+      updateStatus(sender_psid, payload, handleGreetingPostback);
       break;
     default:
       console.log('Cannot differentiate the payload type, treat it as a emtpy message');
