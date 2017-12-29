@@ -330,8 +330,7 @@ function handlePostback(sender_psid, received_postback) {
       request({
         "url": `${FACEBOOK_GRAPH_API_BASE_URL}search?type=page&q=NonProfit+Australia&fields=name,id,category,location&center=-33.8876,151.19837&distance=1000`,
         "qs": { "access_token": PAGE_ACCESS_TOKEN },
-        "method": "POST",
-        "json": request_body
+        "method": "GET"
       }, (err, res, body) => {
         console.log("PREF_CANVASSING Response res:", res);
         console.log("PREF_CANVASSING Response body:", body);
