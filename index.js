@@ -307,7 +307,7 @@ function handlePreferencePostback(sender_psid, chatStatus){
       } else {
           console.log("Facebook API result:", body);
           let bodyJson = JSON.parse(body);
-          let elements = bodyJson.data.map(org => {
+          let elements = bodyJson.data.slice(0,5).map(org => {
               let element = {
                 "title": org.name,
                 "buttons":[{
