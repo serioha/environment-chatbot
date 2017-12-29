@@ -90,7 +90,7 @@ function handleMessage(sender_psid, message) {
     if (err){
       console.log('Error in getteing chat status:', err);
     }
-    if (cs.status === AUSTRALIA_YES && message.attachement && message.attachment.payload && message.attachment.payload.coorditation){
+    if (cs && cs.status === AUSTRALIA_YES && message.attachement && message.attachment.payload && message.attachment.payload.coorditation){
       console.log('message.attachment.payload.coorditation', message.attachment.payload.coorditation);
     }
   });
@@ -236,7 +236,10 @@ function updateStatus(sender_psid, payload, callback){
   const update = {status: payload};
   const options = {upsert: true};
 
-  ChatStatus.findOneAndUpdate(query, update, options).exec((err, cs) => callback(cs.user_id));
+  ChatStatus.findOneAndUpdate(query, update, options).exec((err, cs) => {
+    console.log('update status to db: ', cs);
+    callback(cs.user_id);
+  });
 }
 
 function handlePostback(sender_psid, received_postback) {
