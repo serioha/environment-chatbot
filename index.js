@@ -106,8 +106,11 @@ function handleMessage(sender_psid, message) {
     handleMessageWithLocationCoordinates(sender_psid, coordinates.lat, coordinates.long);
     return;
   } else if (message.nlp && message.nlp.entities && message.nlp.entities.location && message.nlp.entities.location.find(g => g.confidence > 0.8 && g.suggested)){
-    const locationName = encodeURIComponent(g.value);
-    callGeocodingApi(locationName, handleConfirmLocation);
+    const locationName = message.nlp.entities.location.find(loc => loc.confidence > 0.8 && loc.suggested);
+    if (locationName.value){
+      const locationNameEncoded = encodeURIComponent(locationName.value);
+      callGeocodingApi(locationNameEncoded, handleConfirmLocation);
+    }
     return;
   } else if (message.nlp && message.nlp.entities && message.nlp.entities.greetings && message.nlp.entities.greetings.find(g => g.confidence > 0.8 && g.value === 'true')){
     handlePostback(sender_psid, {payload: GREETING});
