@@ -105,7 +105,7 @@ function handleMessage(sender_psid, message) {
   if (coordinates && !isNaN(coordinates.lat) && !isNaN(coordinates.long)){
     handleMessageWithLocationCoordinates(sender_psid, coordinates.lat, coordinates.long);
     return;
-  } else if (message.nlp && message.nlp.entities && message.nlp.entities.location && message.nlp.entities.location.find(g => g.confidence > 0.8 && g.suggested === 'true')){
+  } else if (message.nlp && message.nlp.entities && message.nlp.entities.location && message.nlp.entities.location.find(g => g.confidence > 0.8 && g.suggested)){
     const locationName = encodeURIComponent(g.value);
     callGeocodingApi(locationName, handleConfirmLocation);
     return;
