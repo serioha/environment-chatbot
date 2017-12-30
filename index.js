@@ -13,6 +13,7 @@ const PREF_CANVASSING = 'PREF_CANVASSING';
 const AUSTRALIA_NO = 'AUSTRALIA_NO';
 const OTHER_HELP_YES = 'OTHER_HELP_YES';
 const FACEBOOK_GRAPH_API_BASE_URL = 'https://graph.facebook.com/v2.6/';
+const GOOGLE_GEOCODING_API = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
 const MONGODB_URI = process.env.MONGODB_URI;
 const GOOGLE_GEOCODING_API_KEY = process.env.GOOGLE_GEOCODING_API_KEY;
 
@@ -104,7 +105,11 @@ function handleMessage(sender_psid, message) {
   if (coordinates && !isNaN(coordinates.lat) && !isNaN(coordinates.long)){
     handleMessageWithLocationCoordinates(sender_psid, coordinates.lat, coordinates.long);
     return;
-  } else if (message.nlp && message.nlp.entities && message.nlp.entities.greetings && message.nlp.entities.greetings.find(g => g.confidence > 0.9)){
+  } else if (message.nlp && message.nlp.entities && message.nlp.entities.locaton && message.nlp.entities.location.find(g => g.confidence > 0.8 && g.suggested === 'true')){
+    const locationName = encodeURIComponent(g.value);
+    callGeocodingApi(locationName, location => {console.log('Geocoding api result: ', location)});
+    return;
+  } else if (message.nlp && message.nlp.entities && message.nlp.entities.greetings && message.nlp.entities.greetings.find(g => g.confidence > 0.8 && g.value === 'true')){
     handlePostback(sender_psid, {payload: GREETING});
     return;
   }
@@ -428,6 +433,26 @@ function callSendAPI(sender_psid, response) {
     console.log("Message Sent Response body:", body);
     if (err) {
       console.error("Unable to send message:", err);
+    }
+  });
+}
+
+function callGeocodingApi(address, callback){
+  request({
+    "url": `${GOOGLE_GEOCODING_API}${address}&key=${GOOGLE_GEOCODING_API_KEY}`,
+    "method": "GET"
+  }, (err, res, body) => {
+    if (err) {
+      console.error("Unable to retrieve location from Google API:", err);
+    } else {
+      const bodyObj = JSON.parse(body);
+      if (bodyObj.status === 'OK'){
+        if (bodyObj.results && bodyObj.results[0] && bodyObj.results[0].geometry && bodyObj.results[0].geometry.location){
+          callback(bodyObj.results[0].geometry.location);
+        }
+      } else{
+        console.error("Unable to retrieve location (status non-OK):", bodyObj);
+      }
     }
   });
 }
