@@ -119,7 +119,7 @@ function handleMessage(sender_psid, message) {
 }
 
 function handleConfirmLocation(sender_psid, geocoding_location, geocoding_formattedAddr){
-  console.log('Geocoding api result: ', location);
+  console.log('Geocoding api result: ', geocoding_location);
   const query = {'user_id': sender_psid, 'status': AUSTRALIA_YES };
   const update = {
     $set: { "location.lat": geocoding_location.lat, "location.long": geocoding_location.lng, status: AU_LOC_PROVIDED }
@@ -136,7 +136,7 @@ function handleConfirmLocation(sender_psid, geocoding_location, geocoding_format
           "type":"template",
           "payload":{
             "template_type":"button",
-            "text":`${geocoding_formattedAddr}. Is it your location?`,
+            "text":`${geocoding_formattedAddr}. Is it your address?`,
             "buttons":[
               {
                 "type":"postback",
