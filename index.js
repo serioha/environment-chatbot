@@ -107,7 +107,7 @@ function handleMessage(sender_psid, message) {
     return;
   } else if (message.nlp && message.nlp.entities && message.nlp.entities.location && message.nlp.entities.location.find(g => g.confidence > 0.8 && g.suggested === 'true')){
     const locationName = encodeURIComponent(g.value);
-    callGeocodingApi(locationName, location => {console.log('Geocoding api result: ', location)});
+    callGeocodingApi(locationName, handleConfirmLocation);
     return;
   } else if (message.nlp && message.nlp.entities && message.nlp.entities.greetings && message.nlp.entities.greetings.find(g => g.confidence > 0.8 && g.value === 'true')){
     handlePostback(sender_psid, {payload: GREETING});
@@ -115,6 +115,9 @@ function handleMessage(sender_psid, message) {
   }
 }
 
+function handleConfirmLocation(location){
+  console.log('Geocoding api result: ', location);
+}
 function handleMessageWithLocationCoordinates(sender_psid, coordinates_lat, coordinates_long){
   const query = {'user_id': sender_psid, 'status': AUSTRALIA_YES };
   const update = {
@@ -438,10 +441,12 @@ function callSendAPI(sender_psid, response) {
 }
 
 function callGeocodingApi(address, callback){
+  console.log('before calling geocoding api with address:', address);
   request({
     "url": `${GOOGLE_GEOCODING_API}${address}&key=${GOOGLE_GEOCODING_API_KEY}`,
     "method": "GET"
   }, (err, res, body) => {
+    console.log('after calling geocoding api with result:', body);
     if (err) {
       console.error("Unable to retrieve location from Google API:", err);
     } else {
