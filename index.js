@@ -298,7 +298,7 @@ function handlePreferencePostback(sender_psid, chatStatus){
   console.log('handlePreferencePostback params: ', chatStatus);
   if (chatStatus && !isNaN(chatStatus.location.lat) && !isNaN(chatStatus.location.long)){
     request({
-      "url": `${FACEBOOK_GRAPH_API_BASE_URL}search?type=page&q=NonProfit+Australia&fields=name,id,category,location,picture&center=${chatStatus.location.lat},${chatStatus.location.long}&distance=5000`,
+      "url": `${FACEBOOK_GRAPH_API_BASE_URL}search?type=page&q=NonProfit+Australia&fields=name,id,category,location,picture`,
       "qs": { "access_token": PAGE_ACCESS_TOKEN },
       "method": "GET"
     }, (err, res, body) => {
@@ -307,7 +307,13 @@ function handlePreferencePostback(sender_psid, chatStatus){
       } else {
           console.log("Facebook API result:", body);
           let bodyJson = JSON.parse(body);
-          let elements = bodyJson.data.slice(0,3).map(org => {
+          let elements = bodyJson.data.filter(d => {
+            if (isNaN(d.location.latitude) || isNaN(d.location.longitude)){
+              return false;
+            }
+            return d.location.latitude < chatStatus.location.lat + 0.1 && d.location.latitude > chatStatus.location.lat - 0.1
+            && d.location.longitude < chatStatus.location.long + 0.1 && d.location.longitude > chatStatus.location.long - 0.1
+          }).slice(0,3).map(org => {
               let element = {
                 "title": org.name,
                 "buttons":[{
