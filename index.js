@@ -312,7 +312,7 @@ function handlePreferencePostback(sender_psid, chatStatus){
               return false;
             }
             return d.location.latitude < chatStatus.location.lat + 0.1 && d.location.latitude > chatStatus.location.lat - 0.1
-            && d.location.longitude < chatStatus.location.long + 0.1 && d.location.longitude > chatStatus.location.long - 0.1
+              && d.location.longitude < chatStatus.location.long + 0.1 && d.location.longitude > chatStatus.location.long - 0.1
           }).slice(0,3).map(org => {
               let element = {
                 "title": org.name,
