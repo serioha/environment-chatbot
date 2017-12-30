@@ -99,83 +99,85 @@ function handleMessage(sender_psid, message) {
   console.log('handleMEssage message:', JSON.stringify(message));
 
   const locationAttachment = message && message.attachments && message.attachments.find(a => a.type === 'location');
-  console.log('handleMEssage locationAttachment:', JSON.stringify(locationAttachment));
-
   const coordinates = locationAttachment && locationAttachment.payload && locationAttachment.payload.coordinates;
-  console.log('handleMEssage coordinates:', JSON.stringify(coordinates));
 
   if (coordinates && !isNaN(coordinates.lat) && !isNaN(coordinates.long)){
-    const query = {'user_id': sender_psid, 'status': AUSTRALIA_YES };
-    const update = {
-      $set: { "location.lat": coordinates.lat, "location.long": coordinates.long, status: AUSTRALIA_LOCATION_PROVIDED }
-    };
-    const options = {upsert: true, new: true};
-
-    ChatStatus.findOneAndUpdate(query, update, options, (err, cs) => {
-      console.log('handleMessage update coordinates:', cs);
-      if (err){
-        console.log('Error in updating coordinates:', err);
-      } else if (cs){
-        response = {
-          "attachment": {
-            "type": "template",
-            "payload": {
-              "template_type": "list",
-              "top_element_style": "compact",
-              "elements": [
-                {
-                  "title": "Environmental Cleanup",
-                  "subtitle": "Clean environment",
-                  "image_url": "http://www.wwf.org.au/Images/UserUploadedImages/416/img-bait-reef-coral-bleaching-rubble-1000px.jpg",
-                  "buttons": [
-                    {
-                      type: "postback",
-                      title: "Go Environmental Cleanup",
-                      payload: PREF_CLEANUP
-                    }
-                  ]
-                }, {
-                  "title": "Revegetation",
-                  "subtitle": "Revegetation",
-                  "image_url": "http://www.wwf.org.au//Images/UserUploadedImages/416/img-planet-globe-on-moss-forest-1000px.jpg",
-                  "buttons": [
-                    {
-                      type: "postback",
-                      title: "Go Revegetation",
-                      payload: PREF_REVEGETATION
-                    }
-                  ]
-                }, {
-                  "title": "Bio Survey",
-                  "subtitle": "Bio Survey",
-                  "image_url": "http://www.wwf.org.au/Images/UserUploadedImages/416/img-koala-in-tree-1000px.jpg",
-                  "buttons": [
-                    {
-                      type: "postback",
-                      title: "Go Bio Survey",
-                      payload: PREF_BIO_SURVEY
-                    }
-                  ]
-                }, {
-                  "title": "Canvassing",
-                  "subtitle": "Canvassing",
-                  "image_url": "http://www.wwf.org.au/Images/UserUploadedImages/416/img-hackathon-winners-2017-1000px.jpg",
-                  "buttons": [
-                    {
-                      type: "postback",
-                      title: "Go Canvassing",
-                      payload: PREF_CANVASSING
-                    }
-                  ]
-                }
-              ]
-            }
-          }
-        };
-        callSendAPI(sender_psid, response);
-      }
-    });
+    handleMessageWithLocationAttachment(sender_psid, coordinates.lat, coordinates.long);
+    return;
   }
+}
+
+function handleMessageWithLocationAttachment(sender_psid, coordinates_lat, coordinates_long){
+  const query = {'user_id': sender_psid, 'status': AUSTRALIA_YES };
+  const update = {
+    $set: { "location.lat": coordinates_lat, "location.long": coordinates_long, status: AUSTRALIA_LOCATION_PROVIDED }
+  };
+  const options = {upsert: true, new: true};
+
+  ChatStatus.findOneAndUpdate(query, update, options, (err, cs) => {
+    console.log('handleMessage update coordinates:', cs);
+    if (err){
+      console.log('Error in updating coordinates:', err);
+    } else if (cs){
+      response = {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "list",
+            "top_element_style": "compact",
+            "elements": [
+              {
+                "title": "Environmental Cleanup",
+                "subtitle": "Clean environment",
+                "image_url": "http://www.wwf.org.au/Images/UserUploadedImages/416/img-bait-reef-coral-bleaching-rubble-1000px.jpg",
+                "buttons": [
+                  {
+                    type: "postback",
+                    title: "Go Environmental Cleanup",
+                    payload: PREF_CLEANUP
+                  }
+                ]
+              }, {
+                "title": "Revegetation",
+                "subtitle": "Revegetation",
+                "image_url": "http://www.wwf.org.au//Images/UserUploadedImages/416/img-planet-globe-on-moss-forest-1000px.jpg",
+                "buttons": [
+                  {
+                    type: "postback",
+                    title: "Go Revegetation",
+                    payload: PREF_REVEGETATION
+                  }
+                ]
+              }, {
+                "title": "Bio Survey",
+                "subtitle": "Bio Survey",
+                "image_url": "http://www.wwf.org.au/Images/UserUploadedImages/416/img-koala-in-tree-1000px.jpg",
+                "buttons": [
+                  {
+                    type: "postback",
+                    title: "Go Bio Survey",
+                    payload: PREF_BIO_SURVEY
+                  }
+                ]
+              }, {
+                "title": "Canvassing",
+                "subtitle": "Canvassing",
+                "image_url": "http://www.wwf.org.au/Images/UserUploadedImages/416/img-hackathon-winners-2017-1000px.jpg",
+                "buttons": [
+                  {
+                    type: "postback",
+                    title: "Go Canvassing",
+                    payload: PREF_CANVASSING
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      };
+      callSendAPI(sender_psid, response);
+    }
+  });
 }
 
 function handleStartSearchYesPostback(sender_psid){
