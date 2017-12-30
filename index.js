@@ -39,7 +39,7 @@ app.post('/webhook', (req, res) => {
   if (body.object === 'page') {
       // Iterate over each entry
       // There may be multiple if batched
-      if (!body.entry){
+      if (body.entry && body.entry.length <= 0){
         return;
       }
       body.entry.forEach((pageEntry) => {
@@ -308,7 +308,7 @@ function handlePreferencePostback(sender_psid, chatStatus){
           console.log("Facebook API result:", body);
           let bodyJson = JSON.parse(body);
           let elements = bodyJson.data.filter(d => {
-            if (isNaN(d.location.latitude) || isNaN(d.location.longitude)){
+            if (isNaN(d.location && d.location.latitude) || isNaN(d.location && d.location.longitude)){
               return false;
             }
             return d.location.latitude < chatStatus.location.lat + 0.1 && d.location.latitude > chatStatus.location.lat - 0.1
