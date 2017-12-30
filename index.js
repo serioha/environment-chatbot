@@ -95,7 +95,6 @@ app.get('/webhook', (req, res) => {
 
 function handleMessage(sender_psid, message) {
   // check if it is a location message
-  let response;
   console.log('handleMEssage message:', JSON.stringify(message));
 
   const locationAttachment = message && message.attachments && message.attachments.find(a => a.type === 'location');
@@ -119,7 +118,7 @@ function handleMessageWithLocationAttachment(sender_psid, coordinates_lat, coord
     if (err){
       console.log('Error in updating coordinates:', err);
     } else if (cs){
-      response = {
+      const response = {
         "attachment": {
           "type": "template",
           "payload": {
