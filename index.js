@@ -14,6 +14,7 @@ const AUSTRALIA_NO = 'AUSTRALIA_NO';
 const OTHER_HELP_YES = 'OTHER_HELP_YES';
 const FACEBOOK_GRAPH_API_BASE_URL = 'https://graph.facebook.com/v2.6/';
 const MONGODB_URI = process.env.MONGODB_URI;
+const GOOGLE_GEOCODING_API_KEY = process.env.GOOGLE_GEOCODING_API_KEY;
 
 const
   request = require('request'),
@@ -101,12 +102,15 @@ function handleMessage(sender_psid, message) {
   const coordinates = locationAttachment && locationAttachment.payload && locationAttachment.payload.coordinates;
 
   if (coordinates && !isNaN(coordinates.lat) && !isNaN(coordinates.long)){
-    handleMessageWithLocationAttachment(sender_psid, coordinates.lat, coordinates.long);
+    handleMessageWithLocationCoordinates(sender_psid, coordinates.lat, coordinates.long);
+    return;
+  } else if (message.nlp && message.nlp.entities && message.nlp.entities.greetings && message.nlp.entities.greetings.find(g => g.confidence > 0.9)){
+    handlePostback(sender_psid, {payload: GREETING});
     return;
   }
 }
 
-function handleMessageWithLocationAttachment(sender_psid, coordinates_lat, coordinates_long){
+function handleMessageWithLocationCoordinates(sender_psid, coordinates_lat, coordinates_long){
   const query = {'user_id': sender_psid, 'status': AUSTRALIA_YES };
   const update = {
     $set: { "location.lat": coordinates_lat, "location.long": coordinates_long, status: AUSTRALIA_LOCATION_PROVIDED }
