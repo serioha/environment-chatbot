@@ -120,11 +120,11 @@ function handleMessage(sender_psid, message) {
 
 function handleConfirmLocation(sender_psid, geocoding_location, geocoding_formattedAddr){
   console.log('Geocoding api result: ', geocoding_location);
-  const query = {$and: [{'user_id': sender_psid}, {'status': AUSTRALIA_YES }]};
+  const query = {$and: [{'user_id': sender_psid}, { 'status': AUSTRALIA_YES }]};
   const update = {
     $set: { "location.lat": geocoding_location.lat, "location.long": geocoding_location.lng, status: AU_LOC_PROVIDED }
   };
-  const options = {upsert: true, new: true};
+  const options = {upsert: false, new: true};
 
   ChatStatus.findOneAndUpdate(query, update, options, (err, cs) => {
     console.log('handleConfirmLocation update location:', cs);
@@ -158,11 +158,14 @@ function handleConfirmLocation(sender_psid, geocoding_location, geocoding_format
 }
 
 function handleMessageWithLocationCoordinates(sender_psid, coordinates_lat, coordinates_long){
-  const query = {'user_id': sender_psid, 'status': AUSTRALIA_YES };
+  const query = {$and: [
+    { 'user_id': sender_psid },
+    { 'status': AUSTRALIA_YES }
+  ]};
   const update = {
     $set: { "location.lat": coordinates_lat, "location.long": coordinates_long, status: AU_LOC_PROVIDED }
   };
-  const options = {upsert: true, new: true};
+  const options = {upsert: false, new: true};
 
   ChatStatus.findOneAndUpdate(query, update, options, (err, cs) => {
     console.log('handleMessage update coordinates:', cs);
@@ -408,7 +411,7 @@ function handlePreferencePostback(sender_psid, chatStatus){
 function updateStatus(sender_psid, status, callback){
   const query = {user_id: sender_psid};
   const update = {status: status};
-  const options = {upsert: true};
+  const options = {upsert: status === GREETING};
 
   ChatStatus.findOneAndUpdate(query, update, options).exec((err, cs) => {
     console.log('update status to db: ', cs);
@@ -419,7 +422,7 @@ function updateStatus(sender_psid, status, callback){
 function updatePreference(sender_psid, perference, callback){
   const query = {user_id: sender_psid};
   const update = {status: 'PREFERENCE_PROVIDED', preference: perference};
-  const options = {upsert: true, new: true};
+  const options = {upsert: false, new: true};
 
   ChatStatus.findOneAndUpdate(query, update, options).exec((err, cs) => {
     console.log('update perference to db: ', cs);
