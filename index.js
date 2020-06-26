@@ -73,7 +73,7 @@ app.post('/webhook', (req, res) => {
 })
 
 // Accepts GET requests at the /webhook endpoint
-app.get('/webhook', (req, res) => {
+app.get('/webhook/', (req, res) => {
   /** UPDATE YOUR VERIFY TOKEN **/
   const VERIFY_TOKEN = process.env.VERIFICATION_TOKEN
 
