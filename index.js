@@ -72,11 +72,6 @@ app.post('/webhook', (req, res) => {
   }
 })
 
-// Index route
-app.get('/', function (req, res) {
-  res.send('Hello world, I am a chat bot')
-})
-
 // Accepts GET requests at the /webhook endpoint
 app.get('/webhook/', (req, res) => {
   /** UPDATE YOUR VERIFY TOKEN **/
